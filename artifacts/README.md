@@ -17,3 +17,13 @@ The verified split contains 1,050 training, 355 validation and 356 test images. 
 - `conventional_aug_validation_predictions.csv`: 355 validation image IDs, labels, predictions and maximum softmax scores.
 
 See the [augmentation report](../docs/conventional-augmentation.md) for the comparison and limitations. Raw images are not mirrored here. Mount the original Kaggle datasets to use their paths or resolve images by ID. These are research checkpoints.
+
+## Paired three-seed study
+
+- `paired_no_aug_artifacts.zip` and `paired_conventional_aug_artifacts.zip`: all three selected model checkpoints per condition, epoch histories, per-image validation predictions, confusion matrices, per-class metrics, configuration and preview.
+- `paired_seed_results.csv`: independently verified results for all six runs.
+- `paired_seed_summary.csv`: condition means and sample standard deviations.
+- `paired_seed_differences.csv`: paired augmentation-minus-baseline differences.
+- `augmentation_preview.png`: visually inspected training-only augmentation examples.
+
+ZIP CRCs, validation IDs and labels, recomputed metrics, selected epochs and paired initialization hashes were checked. See [study report](../docs/paired-seed-study.md). No test predictions were generated.
