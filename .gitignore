@@ -1,0 +1,19 @@
+# Raw images and local datasets
+data/
+*.jpg
+*.jpeg
+*.png
+*.zip
+*.keras
+*.h5
+
+# Notebook/cache artifacts
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Local environment
+.venv/
+venv/
+.env
