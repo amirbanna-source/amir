@@ -11,7 +11,7 @@ Master's thesis work by **Amir Albana**. This repository documents a controlled 
 - Saved the recovered [model checkpoint, split, and validation outputs](artifacts/). The **held-out test set has not been evaluated**.
 - The [archived exploratory Kaggle notebook](notebooks/01_isic2019_audit_split_baseline.ipynb) records the earlier audit and run. The [recovered rerun notebook](notebooks/02_isic2019_baseline_rerun_validation.ipynb) preserves the baseline evaluation; the [Kaggle notebook](https://www.kaggle.com/code/amirsalahk/notebooke017076bfb/edit), saved as Version 1.
 
-- Completed the first conventional augmentation run on the identical split: validation accuracy **29.01%**, macro F1 **0.2576**, balanced accuracy **0.3365**. The checkpoint selected epoch 12 by validation loss **1.6548**; early stopping ended training at epoch 17. This run scored below the baseline; a paired multi-seed comparison is the next step. See [experiment report](docs/conventional-augmentation.md) and [executed notebook](notebooks/03_isic2019_conventional_augmentation.ipynb).
+- Completed the first conventional augmentation run on the identical split: validation accuracy **29.01%**, macro F1 **0.2576**, balanced accuracy **0.3365**. The checkpoint selected epoch 12 by validation loss **1.6548**; early stopping ended training at epoch 17. This run scored below the baseline; the paired multi-seed comparison below is now complete. See [experiment report](docs/conventional-augmentation.md) and [executed notebook](notebooks/03_isic2019_conventional_augmentation.ipynb).
 
 ## Documentation
 
@@ -35,3 +35,9 @@ The project's initial proposal described nine classes. The verified subset curre
 Raw images and uploaded source CSV datasets are not included here. The archived notebook retains historical failed and restarted cells, so it is not a clean `Run All` workflow. The recovered split CSV contains Kaggle mount paths and may need path repair on a different mount. See [reproduction notes](docs/reproduction.md) before rerunning.
 
 Research use only; this model is not a clinical diagnostic tool.
+
+## Paired three-seed comparison
+
+Completed six controlled runs (seeds 42, 43, 44). Mean validation accuracy: no augmentation **34.46%** versus conventional augmentation **36.62%**. Mean macro F1: **0.3156** versus **0.3477**. Augmentation improved macro F1 in two of three pairs; these preliminary results show substantial seed variation. Earlier exploratory runs are analyzed separately. All six checkpoints and run evidence are preserved. The test set remains untouched.
+
+See [full paired study results](docs/paired-seed-study.md) and [executed notebook](notebooks/04_isic2019_paired_seed_study.ipynb).
