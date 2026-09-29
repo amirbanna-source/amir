@@ -1,3 +1,8 @@
 # Notebooks
 
-The [exported Kaggle notebook](01_isic2019_audit_split_baseline.ipynb) records the original exploratory audit, split, data loader, and baseline training code. It has historical failed and restart-related cells, so it is not yet a clean end-to-end `Run All` notebook. The bulky file listing and obsolete error traceback were cleared from its saved outputs; the code and meaningful split/training results were retained.
+- [Original audit, split, and baseline](01_isic2019_audit_split_baseline.ipynb): preserves the original exploratory work and first training run.
+- [Baseline rerun and validation](02_isic2019_baseline_rerun_validation.ipynb): preserves the recovered split, 25-epoch rerun, saved checkpoint checks, and validation-only evaluation. Best validation loss was 1.5410 at epoch 24; validation accuracy was 0.4141 and macro F1 was 0.4063.
+
+These exported Kaggle notebooks include historical failed and restart-related cells and are not yet clean end-to-end `Run All` notebooks. The bulky initial file listing and obsolete network-error traceback were removed from saved outputs; source code and meaningful results are retained. The rerun notebook header identifies the cells to use.
+
+[Recovered artifacts](../artifacts/) include the split CSV, best CNN checkpoint, validation predictions, and confusion matrix. The 356-image test set remains unevaluated.
