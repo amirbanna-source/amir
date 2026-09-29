@@ -1,13 +1,13 @@
 # CNN baseline without augmentation
 
-## Setup recorded from the Kaggle notebook
+## Setup
 
 - Inputs: 128 × 128 RGB, pixel values scaled to [0, 1], batch size 32.
 - Labels: `AK=0, BCC=1, BKL=2, DF=3, MEL=4, NV=5, SCC=6, VASC=7`.
 - Architecture: convolution blocks with 32, 64, 128, and 256 filters; global average pooling; dense layer of 128 units; dropout 0.35; eight-way softmax.
 - Optimizer/loss: Adam at learning rate 0.001 and sparse categorical cross-entropy.
-- Training: class weights from the 1,050 training images; up to 25 epochs; early stopping after validation loss failed to improve, with best weights restored. Checkpoint selected by minimum validation loss.
-- Hardware: Kaggle session detected two Tesla T4 GPUs. This does not by itself show that distributed two-GPU training was used.
+- Training: class weights from the 1,050 training images; up to 25 epochs; early stopping with patience 5 and best weights restored. Checkpoint selected by minimum validation loss.
+- Hardware: Kaggle detected two Tesla T4 GPUs; the code does not use distributed training.
 
 | Class | Training images | Weight |
 | --- | ---: | ---: |
@@ -20,8 +20,24 @@
 | SCC | 110 | 1.1932 |
 | VASC | 78 | 1.6827 |
 
-## Observed results
+## Training runs
 
-Training ended after **16 epochs**. The checkpoint chosen by validation loss was from epoch **11**, with validation loss **1.6795** and validation accuracy **0.2817**. The greatest *observed* validation accuracy during the run was **0.2930** at epoch 13; that was not the checkpoint-selection criterion. For context, predicting the most frequent validation class (BKL: 94 of 355 images) every time would yield **26.48% validation accuracy**. This comparison is only an accuracy reference, not an eight-class macro-F1 baseline.
+| Run | Epochs trained | Best epoch by validation loss | Best validation loss | Accuracy at selected checkpoint | Macro F1 at selected checkpoint |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Original exploratory run (Sep 24) | 16 | 11 | 1.6795 | 0.2817 | Not measured |
+| Recovered rerun (Sep 29) | 25 | 24 | 1.5410 | 0.4141 | 0.4063 |
 
-The CNN result is preliminary and close to that simple accuracy reference. Macro F1, balanced accuracy, class-wise results, and a confusion matrix are pending. No held-out test result has been reported. Training logs, exact executable notebook, and model checkpoint should be added to this repository if available; no missing outputs are reconstructed here.
+The original Kaggle session lost its split CSV and model checkpoint. On Sep 29 the same split construction and baseline cells were rerun with the three datasets attached. The recovered split again contained 1,050 training, 355 validation, and 356 test images. The selected rerun checkpoint has **validation accuracy 0.4141**, **macro F1 0.4063**, and **balanced accuracy 0.4611**. The saved checkpoint and per-image validation outputs are in [artifacts](../artifacts/). These are two separate training runs; do not combine the old learning curve with the recovered checkpoint.
+
+| Class | Validation support | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: | ---: |
+| AK | 26 | 0.20 | 0.62 | 0.30 |
+| BCC | 72 | 0.41 | 0.51 | 0.45 |
+| BKL | 94 | 0.44 | 0.17 | 0.25 |
+| DF | 22 | 1.00 | 0.05 | 0.09 |
+| MEL | 28 | 0.85 | 0.39 | 0.54 |
+| NV | 34 | 0.51 | 0.79 | 0.62 |
+| SCC | 50 | 0.35 | 0.26 | 0.30 |
+| VASC | 29 | 0.58 | 0.90 | 0.70 |
+
+The confusion matrix and image-level predictions were generated only for validation. DF recall is particularly weak (1 of 22), and 15 of 28 melanoma images were predicted as NV. This model is a preliminary research baseline and is not suitable for clinical use. The held-out test set has **not been evaluated**.
