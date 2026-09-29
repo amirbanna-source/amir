@@ -29,7 +29,7 @@ The split CSV contains the original Kaggle mount paths. Attach the same three da
 
 1. Discuss the eight-class verified subset versus the original nine-class plan with the supervisor and record the decision.
 2. Clean the exploratory notebook into a reproducible Run All workflow without the obsolete URL download or session-reset cells.
-3. Apply conventional augmentation to training only, retrain the same classifier, and compare on the fixed validation set using accuracy, macro F1, and per-class metrics.
+3. The first conventional augmentation run is complete and scored below the baseline (accuracy 0.2901; macro F1 0.2576). Use the [clean executed notebook](../notebooks/03_isic2019_conventional_augmentation.ipynb) or [standalone script](../scripts/conventional_aug_experiment.py) with the same three datasets and GPU enabled. Next, inspect augmented image examples and run a paired multi-seed comparison with consistent seed initialization. See the [experiment report](conventional-augmentation.md).
 4. Specify GAN architecture, training-only input data, quality checks, number of generated images, and synthetic-to-real ratio before the GAN experiment.
 5. Run GAN-only and combined conditions, select by validation, then evaluate the chosen approach once on the untouched test set.
 
