@@ -18,12 +18,12 @@ Known working outputs:
 /kaggle/working/baseline_no_aug.keras
 ```
 
-The `/kaggle/working/` files can disappear after a session reset unless saved in a Kaggle notebook version or separately downloaded. Confirm they exist before attempting validation evaluation. The exact reproducible split construction and baseline training code are currently in the Kaggle notebook, not in this archive.
+The `/kaggle/working/` files can disappear after a session reset unless saved in a Kaggle notebook version or separately downloaded. Confirm they exist before attempting validation evaluation. The [exported exploratory notebook](../notebooks/01_isic2019_audit_split_baseline.ipynb) includes the split construction and baseline training code. It also retains historical attempts and session-reset recovery; the earlier direct-URL ground-truth cell failed in Kaggle, and subsequent cells read an attached local CSV instead. Do not assume that `Run All` from the top will work without editing these exploratory cells. The exported notebook contains the training output but not the `.keras` checkpoint or split CSV bytes.
 
-## Bring the notebook into GitHub
+## Preserve future notebook versions
 
 1. In Kaggle, save a notebook version with outputs after verifying the split and baseline checkpoint.
-2. Export/download the actual notebook as `.ipynb` and put it under `notebooks/`; give it a descriptive name such as `01_isic2019_audit_split_baseline.ipynb`.
+2. Export/download updated notebooks as `.ipynb` and add numbered versions under `notebooks/` when the experiment advances.
 3. Remove any secrets, large embedded image outputs, and unnecessary execution traces before committing. Keep the code, chosen random seed, and meaningful numerical outputs.
 4. Add a small, stable manifest of image IDs, labels, groups, and split assignments if permitted; do not commit raw images. Check mounted Kaggle paths if the notebook is run in a new environment.
 
