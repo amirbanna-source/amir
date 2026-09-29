@@ -8,6 +8,7 @@ Master's thesis work by **Amir Albana**. This repository documents a controlled 
 - Built a lesion-grouped training/validation/test split (1,050/355/356 images).
 - Trained an initial CNN without augmentation. The checkpoint with lowest validation loss achieved **1.680 validation loss and 28.17% validation accuracy** at epoch 11; training stopped after epoch 16.
 - Macro F1, per-class metrics, and the held-out test result have **not yet been computed**.
+- The [exploratory Kaggle notebook](notebooks/01_isic2019_audit_split_baseline.ipynb) contains the audit, split construction, and baseline training code and saved results.
 
 ## Documentation
 
@@ -26,6 +27,6 @@ The project's initial proposal described nine classes. The verified subset curre
 
 ## Repository boundaries
 
-Raw images and uploaded CSV datasets are not included here. The Kaggle notebook is still in Kaggle and needs to be exported into `notebooks/` before the full experiment is reproducible from this repository. The current documents record results supplied by the running Kaggle notebook; they are not a substitute for its executable code and saved split/model outputs.
+Raw images and uploaded CSV datasets are not included here. The notebook is an exploratory record with historical failed and restarted cells, so it is not a clean `Run All` workflow. A saved split manifest and model checkpoint are also not included. See [reproduction notes](docs/reproduction.md) before rerunning.
 
 Research use only; this model is not a clinical diagnostic tool.
