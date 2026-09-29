@@ -6,3 +6,5 @@
 These exported Kaggle notebooks include historical failed and restart-related cells and are not yet clean end-to-end `Run All` notebooks. The bulky initial file listing and obsolete network-error traceback were removed from saved outputs; source code and meaningful results are retained. The rerun notebook header identifies the cells to use.
 
 [Recovered artifacts](../artifacts/) include the split CSV, best CNN checkpoint, validation predictions, and confusion matrix. The 356-image test set remains unevaluated.
+
+- [Conventional augmentation](03_isic2019_conventional_augmentation.ipynb): clean single-cell Kaggle workflow with the exact split fingerprint check, training and validation-only evaluation, including executed outputs. This can run independently with the three source datasets attached and GPU enabled.
