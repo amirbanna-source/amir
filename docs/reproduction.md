@@ -1,39 +1,36 @@
 # Reproduction and next steps
 
-## Kaggle inputs and outputs
+## Kaggle inputs
 
-The working Kaggle notebook used these input files:
+The working Kaggle notebook uses these attached datasets:
 
-```text
-/kaggle/input/datasets/amirsalahk/isic-2019-ground-truth/ISIC_2019_Training_GroundTruth.csv
-/kaggle/input/datasets/amirsalahk/isic-2019-metadata/ISIC_2019_Training_Metadata.csv
-```
+- `nodoubttome/skin-cancer9-classesisic` — image files.
+- `amirsalahk/isic-2019-ground-truth` — ISIC 2019 official diagnosis CSV.
+- `amirsalahk/isic-2019-metadata` — lesion metadata CSV.
 
-The Kaggle image dataset is `nodoubttome/skin-cancer9-classesisic`; its mounted path contains additional dataset directory components and should be discovered from the attached notebook input rather than hard-coded from this document.
+The image dataset's mount path contains additional directory components. Discover paths from `/kaggle/input` rather than hard-coding the image root. The official CSV names are `ISIC_2019_Training_GroundTruth.csv` and `ISIC_2019_Training_Metadata.csv`.
 
-Known working outputs:
+## Saved rerun outputs (Sep 29)
 
-```text
-/kaggle/working/isic2019_verified_split.csv
-/kaggle/working/baseline_no_aug.keras
-```
+The original session's `/kaggle/working` files disappeared after a reset. The split construction, image loading, and baseline training cells were rerun in [the Kaggle notebook](https://www.kaggle.com/code/amirsalahk/notebooke017076bfb/edit), then a new validation-only evaluation cell was added. Kaggle **Version 1, “ISIC 2019 baseline rerun and validation,”** was saved via Quick Save. All four output files were downloaded and committed to [artifacts](../artifacts/):
 
-The `/kaggle/working/` files can disappear after a session reset unless saved in a Kaggle notebook version or separately downloaded. Confirm they exist before attempting validation evaluation. The [exported exploratory notebook](../notebooks/01_isic2019_audit_split_baseline.ipynb) includes the split construction and baseline training code. It also retains historical attempts and session-reset recovery; the earlier direct-URL ground-truth cell failed in Kaggle, and subsequent cells read an attached local CSV instead. Do not assume that `Run All` from the top will work without editing these exploratory cells. The exported notebook contains the training output but not the `.keras` checkpoint or split CSV bytes.
+- `isic2019_verified_split.csv` — 1,761 rows, 1,050 train / 355 validation / 356 held-out test.
+- `baseline_no_aug.keras` — best checkpoint at epoch 24 by validation loss.
+- `baseline_validation_confusion_matrix.csv` — 355 validation cases.
+- `baseline_validation_predictions.csv` — 355 validation predictions.
 
-## Preserve future notebook versions
+The first [archived exploratory notebook](../notebooks/01_isic2019_audit_split_baseline.ipynb) still records the *earlier* run. It retains historical attempts and session-reset recovery; the direct-URL ground-truth cell failed and later cells read the attached local CSV. Its `Run All` path has not been cleaned up. The current Kaggle draft/version contains the new evaluation cell. Do not attribute the earlier run's validation curve to the recovered checkpoint.
 
-1. In Kaggle, save a notebook version with outputs after verifying the split and baseline checkpoint.
-2. Export/download updated notebooks as `.ipynb` and add numbered versions under `notebooks/` when the experiment advances.
-3. Remove any secrets, large embedded image outputs, and unnecessary execution traces before committing. Keep the code, chosen random seed, and meaningful numerical outputs.
-4. Add a small, stable manifest of image IDs, labels, groups, and split assignments if permitted; do not commit raw images. Check mounted Kaggle paths if the notebook is run in a new environment.
+## Reusing the artifacts
+
+The split CSV contains the original Kaggle mount paths. Attach the same three datasets in Kaggle and check these paths exist, or rebuild paths from `image_id` if mounts change. Keep image IDs and split assignments fixed for comparisons. Evaluate the selected checkpoint on the **validation** set with no augmentation; the test split is reserved for final evaluation. Model input is 128 × 128 RGB scaled to [0, 1], class order `AK, BCC, BKL, DF, MEL, NV, SCC, VASC`.
 
 ## Next experiment steps
 
-1. Evaluate the selected baseline checkpoint on **validation**: report macro F1, balanced accuracy, per-class metrics, and confusion matrix.
-2. Discuss eight versus nine classes with the supervisor and record the decision.
-3. Implement conventional augmentation applied to the training set only, then compare on the same validation set.
+1. Discuss the eight-class verified subset versus the original nine-class plan with the supervisor and record the decision.
+2. Clean the exploratory notebook into a reproducible Run All workflow without the obsolete URL download or session-reset cells.
+3. Apply conventional augmentation to training only, retrain the same classifier, and compare on the fixed validation set using accuracy, macro F1, and per-class metrics.
 4. Specify GAN architecture, training-only input data, quality checks, number of generated images, and synthetic-to-real ratio before the GAN experiment.
-5. Run the GAN-only and combined augmentation conditions; select the approach using validation results.
-6. Perform final evaluation on the untouched test set and document limitations.
+5. Run GAN-only and combined conditions, select by validation, then evaluate the chosen approach once on the untouched test set.
 
-Do not describe external ISIC Gallery images as an independent validation cohort until diagnoses and image overlap have been checked.
+External ISIC Archive images require overlap checks and compatible diagnoses before being treated as independent validation data.
