@@ -1,10 +1,19 @@
-# Baseline artifacts
+# Experiment artifacts
 
-This folder contains the 2026-09-29 rerun of the no-augmentation CNN baseline on the 1,761 verified ISIC 2019 images. The split is stratified by diagnosis and grouped by lesion ID when available. Its validation set contains 355 images; the 356 test images have not been evaluated.
+The verified split contains 1,050 training, 355 validation and 356 test images. The test set has not been evaluated.
 
-- `isic2019_verified_split.csv`: training, validation, and test image ID assignments (with Kaggle input paths and lesion metadata).
-- `baseline_no_aug.keras`: best checkpoint by validation loss, trained for 25 epochs; selected at epoch 24.
-- `baseline_validation_confusion_matrix.csv`: 8 × 8 confusion matrix, rows true and columns predicted.
-- `baseline_validation_predictions.csv`: validation image IDs, official labels, predicted labels, and maximum softmax scores.
+## No augmentation baseline
 
-This checkpoint is a research baseline, not a clinical diagnostic model. The input image dataset itself is not mirrored here; mount the original Kaggle inputs to use the saved paths or rebuild paths from image IDs.
+- `isic2019_verified_split.csv`: frozen split membership, official diagnoses, groups and Kaggle image paths.
+- `baseline_no_aug.keras`: recovered baseline checkpoint; epoch 24 selected by validation loss.
+- `baseline_validation_confusion_matrix.csv` and `baseline_validation_predictions.csv`: validation-only outputs.
+
+## Conventional augmentation
+
+- `cnn_conventional_aug.keras`: CNN checkpoint selected at epoch 12; training stopped after 17 epochs. Online augmentation is outside the saved CNN and applied only to training batches.
+- `conventional_aug_metrics.json`: exact metrics, per-class report and experiment settings.
+- `conventional_aug_history.csv`: all 17 training/validation epoch metrics.
+- `conventional_aug_validation_confusion_matrix.csv`: rows true, columns predicted.
+- `conventional_aug_validation_predictions.csv`: 355 validation image IDs, labels, predictions and maximum softmax scores.
+
+See the [augmentation report](../docs/conventional-augmentation.md) for the comparison and limitations. Raw images are not mirrored here. Mount the original Kaggle datasets to use their paths or resolve images by ID. These are research checkpoints.
