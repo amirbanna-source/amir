@@ -6,7 +6,7 @@ Master's thesis work by **Amir Albana**. The current task is **binary classifica
 
 The verified binary subset contains **1,632 images**: **972 training / 329 validation / 331 test**. Original split membership is preserved. Class counts are 894 benign and 738 malignant. The same 324 images lack lesion IDs; patient IDs remain unavailable. The test set has not been evaluated.
 
-The [binary methodology](docs/methodology.md), [split manifest](artifacts/isic2019_binary_split.csv), [exclusion manifest](artifacts/isic2019_binary_excluded_ak.csv) and [baseline notebook](notebooks/05_isic2019_binary_baseline.ipynb) are prepared. **Binary training has not yet run.** The [GAN protocol](docs/gan-protocol-draft.md) is revised for two classes and remains a proposal. The project-plan scope change should be discussed with the supervisor.
+The [binary methodology](docs/methodology.md), [split manifest](artifacts/isic2019_binary_split.csv), [exclusion manifest](artifacts/isic2019_binary_excluded_ak.csv) and [baseline notebook](notebooks/05_isic2019_binary_baseline.ipynb) are prepared. **Three binary baseline runs are complete.** Mean validation accuracy was 54.51%, macro F1 0.3548 and malignant sensitivity 0.22% at threshold 0.5. These checkpoints largely predict benign and require diagnosis before augmentation. See the [full binary results](docs/binary-baseline.md); all three checkpoints and validation evidence are [archived](artifacts/binary_baseline_all_artifacts.zip). The [GAN protocol](docs/gan-protocol-draft.md) is revised for two classes and remains a proposal. The project-plan scope change should be discussed with the supervisor.
 
 ## Historical eight-class experiments
 
