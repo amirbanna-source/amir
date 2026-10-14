@@ -1,0 +1,37 @@
+{
+  "mapping": {
+    "NV": "benign",
+    "BKL": "benign",
+    "DF": "benign",
+    "VASC": "benign",
+    "MEL": "malignant",
+    "BCC": "malignant",
+    "SCC": "malignant"
+  },
+  "targets": {
+    "benign": 0,
+    "malignant": 1
+  },
+  "counts": {
+    "test": {
+      "benign": 185,
+      "malignant": 146
+    },
+    "train": {
+      "benign": 530,
+      "malignant": 442
+    },
+    "val": {
+      "benign": 179,
+      "malignant": 150
+    }
+  },
+  "missing_lesion_ids": 324,
+  "train_class_weights": {
+    "0": 0.9169811320754717,
+    "1": 1.0995475113122173
+  },
+  "source_fingerprint": "900aed297caf894a0a5b0001b3ca974ea954d96104d70781b2eb7a71306227c1",
+  "binary_fingerprint": "4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd",
+  "test_evaluated": false
+}
