@@ -1,0 +1,47 @@
+{
+  "split_fingerprint": "4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd",
+  "tensorflow_version": "2.20.0",
+  "training_only": true,
+  "test_evaluated": false,
+  "subset_size": 32,
+  "class_counts": {
+    "0": 16,
+    "1": 16
+  },
+  "image_shape": [
+    32,
+    128,
+    128,
+    3
+  ],
+  "label_shape": [
+    32,
+    1
+  ],
+  "pipeline_batch_shape": [
+    32,
+    128,
+    128,
+    3
+  ],
+  "pipeline_label_shape": [
+    32
+  ],
+  "pixel_min": 0.0,
+  "pixel_max": 1.0,
+  "pixel_std": 0.16790015995502472,
+  "protocol": {
+    "seed": 42,
+    "subset_seed": 2026,
+    "learning_rates": [
+      0.001,
+      0.0001
+    ],
+    "updates": 300,
+    "report_every": 25,
+    "dropout": 0.35,
+    "class_weight": null,
+    "augmentation": false,
+    "threshold": 0.5
+  }
+}
