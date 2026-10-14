@@ -1,19 +1,35 @@
-# Methodology (working draft)
+# Methodology (binary study; working draft)
 
-Images were obtained from the Skin Cancer ISIC dataset hosted on Kaggle. An initial audit found repeated images, conflicting folder labels, and overlap between the supplied training and test sets. Image IDs were matched to the ISIC 2019 Training Ground Truth, and lesion IDs were obtained from its metadata. One copy of each matched image was retained, producing 1,761 unique images in eight officially verified diagnostic classes. The 441 unmatched IDs were excluded.
+Updated 14 October 2026 following Amir and Sandra's decision to study benign versus malignant lesions. The earlier eight-class experiments are retained as preliminary work.
 
-The verified images were divided into training (1,050), validation (355), and test (356) sets using stratified group splitting. Images with a known shared lesion ID were kept in the same set. For images without a lesion ID, the image ID served as the grouping identifier. Inputs were resized to 128 × 128 RGB pixels and scaled to [0, 1]. Class weights computed from the training set addressed class imbalance during baseline training.
+Images were obtained from the Skin Cancer ISIC dataset hosted on Kaggle. Because an initial audit found duplicate images, conflicting folder labels, and overlap between the supplied training and test sets, those folders were not used as the experimental split. Image IDs were instead matched to the ISIC 2019 Training Ground Truth, and lesion IDs were obtained from the corresponding metadata. One copy of each matched image was retained, producing 1,761 unique images across eight officially verified diagnostic classes.
 
-The planned comparison uses the same classification architecture and data split across four conditions: no augmentation, conventional augmentation, GAN-generated training images, and conventional augmentation combined with GAN-generated images. Augmentation and synthetic-image generation must use **training data only**. The validation set guides model selection and tuning; the held-out test set is reserved for final evaluation after the method is fixed. Intended metrics include accuracy, macro-averaged F1, per-class precision/recall/F1, and a confusion matrix. The three augmented conditions have not yet been run.
+For the binary task, NV, BKL, DF and VASC were mapped to benign (target 0), while MEL, BCC and SCC were mapped to malignant (target 1). The 129 AK images were excluded from the primary analysis rather than assigned to either group. This is an explicit study-scope choice: [AAD describes AK as a precancerous growth](https://www.aad.org/public/diseases/skin-cancer/actinic-keratosis-overview). Original diagnoses are retained for traceability. The binary subset contains 1,632 unique images: 894 benign and 738 malignant.
 
-The original project plan specified nine classes, whereas this verified subset supports eight. The scope change still requires discussion with the supervisor. In addition, 324 verified images lack lesion IDs and patient IDs are unavailable, so complete patient-level separation cannot be confirmed. Any later external validation using ISIC Archive images requires overlap checks and diagnosis mapping before evaluation.
+The verified images were originally divided into training (1,050), validation (355), and test (356) sets using stratified group splitting. Images sharing a known lesion ID were kept in the same set. For images without a lesion ID, the image ID served as the grouping identifier. Binary labels were applied after filtering AK, preserving each retained image's original membership; a new binary-stratified split was not created. The resulting sets contain 972 training, 329 validation and 331 test images.
 
-## Experimental safeguards
+| Class | Training | Validation | Test | Total |
+| --- | ---: | ---: | ---: | ---: |
+| Benign | 530 | 179 | 185 | 894 |
+| Malignant | 442 | 150 | 146 | 738 |
+| Total | 972 | 329 | 331 | 1,632 |
 
-1. Keep the saved image-ID and lesion-group split fixed across all conditions.
-2. Generate or augment images from the training fold only; never use validation or test images for GAN training.
-3. Apply the same preprocessing and metric definitions to each condition.
-4. Choose checkpoints and hyperparameters using validation data only; evaluate test once after selection.
-5. Report class counts and results for all eight classes, including any failed or low-performing classes.
+Images will be resized to 128 x 128 pixels and scaled to [0,1]. Binary class weights derived exclusively from the training set are 0.916981 for benign and 1.099548 for malignant, using N/(2*n_class).
 
-This is the current study design, not a claim that all four experiments have been completed.
+The planned experiments will compare a convolutional neural network trained without augmentation against the same classification approach trained with conventional augmentation, GAN-generated images, and a combination of both. Augmentation and synthetic-image generation will use training data only. The validation set will guide model selection, while the held-out test set will be used for final evaluation. The binary baseline retains the earlier convolutional backbone but uses one sigmoid output and binary cross-entropy. Proposed baseline seeds are 42, 43 and 44, with Adam at 0.001, batch size 32, at most 25 epochs, early-stopping patience 5 and checkpoint selection by minimum validation loss.
+
+Results will include accuracy, macro-averaged F1 score, balanced accuracy, per-class performance and confusion matrices. For the malignant positive class, sensitivity, specificity, ROC-AUC and average precision will also be reported. The initial classification threshold is fixed at 0.5; any later threshold tuning must use validation data and be disclosed. Binary training has not yet been executed, so no binary performance results are available.
+
+The original project plan specified nine classes, and the audit supported eight official diagnoses; the current research task groups seven of these diagnoses into two classes and excludes AK. This change should be reflected in the project plan and discussed with the supervisor. In addition, 324 retained images lack lesion IDs and patient IDs are unavailable, so complete patient-level separation cannot be confirmed. The grouped binary labels contain heterogeneous diagnosis subtypes; subtype-specific errors should be reported when feasible. Any future external validation using the ISIC Archive will first require checks for image overlap and compatible diagnoses.
+
+Repeated development on the same validation set can introduce selection optimism. All earlier eight-class results remain historical; their metrics are not binary baseline results. The 331 retained test images remain reserved for the final evaluation.
+
+## Reproducibility
+
+- [Binary split manifest](../artifacts/isic2019_binary_split.csv)
+- [Excluded AK manifest](../artifacts/isic2019_binary_excluded_ak.csv)
+- [Mapping, counts and fingerprints](../artifacts/binary_config.json)
+- [Prepared baseline notebook](../notebooks/05_isic2019_binary_baseline.ipynb), not executed
+- [Baseline script](../scripts/binary_baseline.py)
+
+Membership and known-group separation were verified on the saved manifest. The script/notebook passed Python syntax checks; GPU/runtime training is still pending.
