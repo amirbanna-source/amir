@@ -1,6 +1,16 @@
-# Skin lesion classification: augmentation study
+# Skin lesion classification: benign versus malignant augmentation study
 
-Master's thesis work by **Amir Albana**. This repository documents a controlled comparison of a CNN trained on verified ISIC 2019 skin lesion images with no augmentation, conventional image augmentation, GAN-generated images, and their combination. The no-augmentation baseline and first conventional augmentation experiment are complete. GAN-generated augmentation and the combined approach remain **planned**.
+Master's thesis work by **Amir Albana**. The current task is **binary classification**: benign (NV/BKL/DF/VASC) versus malignant (MEL/BCC/SCC), excluding AK. The study compares no augmentation, conventional augmentation, GAN augmentation and their combination.
+
+## Current binary status (14 October 2026)
+
+The verified binary subset contains **1,632 images**: **972 training / 329 validation / 331 test**. Original split membership is preserved. Class counts are 894 benign and 738 malignant. The same 324 images lack lesion IDs; patient IDs remain unavailable. The test set has not been evaluated.
+
+The [binary methodology](docs/methodology.md), [split manifest](artifacts/isic2019_binary_split.csv), [exclusion manifest](artifacts/isic2019_binary_excluded_ak.csv) and [baseline notebook](notebooks/05_isic2019_binary_baseline.ipynb) are prepared. **Binary training has not yet run.** The [GAN protocol](docs/gan-protocol-draft.md) is revised for two classes and remains a proposal. The project-plan scope change should be discussed with the supervisor.
+
+## Historical eight-class experiments
+
+The following records describe the previous task. Their performance values are not binary results.
 
 ## Current status (29 September 2026)
 
