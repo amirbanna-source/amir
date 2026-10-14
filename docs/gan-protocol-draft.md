@@ -1,12 +1,12 @@
 # Proposed GAN experiment protocol
 
-Draft prepared 14 October 2026 for Amir and Sandra. No GAN has been trained under this protocol. Eight-class scope still requires supervisor discussion; the edited methodology remains the authoritative study description. This draft proposes implementation choices rather than recording completed experiments.
+Draft revised 14 October 2026 after Amir and Sandra selected benign versus malignant classification, with AK excluded from the primary analysis. No GAN has been trained under this protocol. This draft proposes implementation choices rather than recording completed experiments. See [current methodology](methodology.md) for the authoritative mapping.
 
 ## Existing evidence
 
-The verified subset contains 1,761 images: 1,050 training, 355 validation, 356 test. Known lesion groups stay within one split. There are 324 images without lesion IDs and no patient IDs, so complete patient-level independence cannot be established.
+The audited source contains 1,761 images. Excluding 129 AK images leaves 1,632 binary-labelled images: 972 training, 329 validation and 331 test. Benign comprises NV/BKL/DF/VASC; malignant comprises MEL/BCC/SCC. Membership is inherited from the audited split. Known lesion groups stay within one split. There are 324 images without lesion IDs and no patient IDs, so complete patient-level independence cannot be established.
 
-The completed paired study used CNN seeds 42, 43, 44. Mean validation macro F1 was 0.3156 without augmentation and 0.3477 with conventional augmentation. Class-specific gains were uneven. See [paired study](paired-seed-study.md) and [per-class review](paired-per-class-review.md). Historical exploratory runs remain separate.
+The historical eight-class paired study used CNN seeds 42, 43, 44. Mean validation macro F1 was 0.3156 without augmentation and 0.3477 with conventional augmentation. Class-specific gains were uneven. See [paired study](paired-seed-study.md) and [per-class review](paired-per-class-review.md). Historical exploratory runs remain separate.
 
 ## Research question
 
@@ -16,7 +16,7 @@ The experiment measures usefulness for this classifier, not clinical validity of
 
 ## Generator: proposed feasibility pilot
 
-Start with one shared class-conditional convolutional GAN, trained from scratch on all eight classes rather than eight independent GANs. Proposed pilot: 128 x 128 RGB, 128-dimensional Gaussian latent vector, class conditioning in both generator and discriminator, five upsampling stages from 4 x 4 to 128 x 128, tanh generator output, discriminator logits and binary cross-entropy, Adam learning rate 0.0002 with beta1 0.5 and beta2 0.999, batch size 32, one discriminator and one generator update per step.
+Start with one shared class-conditional convolutional GAN, trained from scratch on both binary classes rather than two independent GANs. Proposed pilot: 128 x 128 RGB, 128-dimensional Gaussian latent vector, class conditioning in both generator and discriminator, five upsampling stages from 4 x 4 to 128 x 128, tanh generator output, discriminator logits and binary cross-entropy, Adam learning rate 0.0002 with beta1 0.5 and beta2 0.999, batch size 32, one discriminator and one generator update per step.
 
 Use the natural training class distribution for real batches and match fake-label distribution within batches; do not silently rebalance rare classes. Input normalization for the GAN is [-1,1]; convert generated images back to [0,1] for the archived CNN. This simple architecture is a feasibility starting point, not a claim of optimal sample efficiency.
 
@@ -28,8 +28,8 @@ No external pretrained generator weights are proposed, avoiding an unquantified 
 
 ## Data boundaries and selection
 
-- Export only the frozen 1,050 training images to the GAN input.
-- Verify the archived split membership fingerprint before export: 900aed297caf894a0a5b0001b3ca974ea954d96104d70781b2eb7a71306227c1.
+- Export only the frozen 972 binary training images to the GAN input.
+- Verify the archived split membership fingerprint before export: 4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd.
 - Do not use validation or test images to train the GAN or choose its image-quality settings.
 - Use the final fixed-budget generator checkpoint if it passes the predefined quality gate. Do not select GAN checkpoints by downstream validation accuracy. Failed runs remain reported.
 - Final quality thresholds, architecture details, main training step budget and pilot acceptance rules must be committed before main training. The pilot budget above is not an approved main-run budget.
@@ -44,11 +44,11 @@ No external pretrained generator weights are proposed, avoiding an unquantified 
 | D | Same real + synthetic pool as C | Same recipe on both sources |
 | E, control | Replace synthetic slots in C with real samples of the same requested class | None |
 
-Primary synthetic pool proposal: one generated image per original training image, matching each class count exactly (1,050 synthetic images total). No increase targeted at poorly performing validation classes. Keep all real training images available. Target 50% real and 50% synthetic training presentations by a declared sampler; record realized source/class counts.
+Primary synthetic pool proposal: one generated image per original training image, matching each binary class count exactly (530 benign and 442 malignant; 972 synthetic images total). No increase targeted at poorly performing validation classes. Keep all real training images available. Target 50% real and 50% synthetic training presentations by a declared sampler; record realized source/class counts.
 
 For E, draw replacement real images from the training split only, with replacement, matching the synthetic-slot labels in C. This checks whether adding real repeated examples gives similar results. It is a control, not a separate new dataset.
 
-Hold the maximum CNN optimizer steps fixed: 33 batches per epoch, at most 25 epochs, batch size 32 with the same final-batch policy across all new conditions. Freeze CNN architecture, optimizer, preprocessing, real-training-derived class weights, dropout seed and validation-loss checkpoint rule from the paired study. Use patience 5.
+Hold the maximum CNN optimizer steps fixed: 31 batches per epoch, at most 25 epochs, batch size 32 with the same final-batch policy across all new conditions. Use the new binary CNN (same convolutional backbone, one sigmoid output and binary cross-entropy), its training-derived binary class weights, and the same optimizer, preprocessing, dropout seed and validation-loss checkpoint rule across conditions. Fixed prediction threshold: 0.5. Save positive-class probabilities. Use patience 5.
 
 A fixed mixed-source budget reduces real-image presentations relative to A/B. Report that explicitly; this is a fixed-compute comparison, not equal real-image exposure. Do not mix it with a larger-dataset experiment that silently doubles steps. Any equal-real-exposure experiment is secondary and must be specified separately.
 
@@ -74,17 +74,17 @@ Without qualified clinical review, report conditional-label uncertainty as a lim
 
 ## Evaluation and evidence
 
-Primary endpoint: validation macro F1, with per-seed values, mean, sample SD and paired differences. Secondary: accuracy, balanced accuracy, per-class precision/recall/F1 and confusion matrices. Save learning curves, sample counts, training steps, initialization hashes and all run failures. Reuse all eight labels when computing macro F1.
+Primary endpoint: validation macro F1, with per-seed values, mean, sample SD and paired differences. Secondary: accuracy, balanced accuracy, per-class precision/recall/F1, malignant sensitivity, specificity, ROC-AUC, average precision and confusion matrices. Preserve original diagnoses for subtype error analysis. Save learning curves, sample counts, training steps, initialization hashes and all run failures. Reuse both binary labels when computing macro F1.
 
 Validation guides classifier selection; repeated choices on this split create selection optimism. Record every tried ratio/model. Only one primary ratio is proposed here; 25% synthetic presentations may be a separately declared sensitivity experiment if resources permit.
 
-Keep the 356-image test set sealed until the protocol, comparisons and selection rules are locked. Final test evaluation should cover the prespecified comparison, with uncertainty accounting for known lesion groups where possible; seeds are not independent patient cohorts.
+Keep the 331-image binary test set sealed until the protocol, comparisons and selection rules are locked. Final test evaluation should cover the prespecified comparison, with uncertainty accounting for known lesion groups where possible; seeds are not independent patient cohorts.
 
 Archive GAN checkpoints, discriminator/optimizer state for resume, generated-image manifests (seed, latent ID, requested class, source checkpoint, pixel hash), quality reports and classifier evidence. Check data redistribution rights before mirroring generated-image bundles publicly.
 
 ## Decisions to resolve with Sandra/supervisor
 
-- Confirm eight-class scope and terminology.
+- Document the agreed binary mapping and AK exclusion in the project plan and discuss with the supervisor.
 - Accept or revise the simple conditional GAN pilot and define its pass/fail rubric.
 - Agree on main generator budget and compute availability.
 - Confirm one-to-one three-seed pairing, five classifier conditions and the fixed-compute estimand.
