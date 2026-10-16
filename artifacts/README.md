@@ -1,3 +1,16 @@
+# Current binary experiments
+
+Conventional augmentation is complete for all three matched seeds. Mean validation accuracy was **63.02%** versus **62.82%** without augmentation; macro F1 **0.6278** versus **0.6259**. Macro F1 improved in two seeds, but malignant sensitivity fell to **61.33%** and ROC-AUC decreased in every seed. This fixed candidate shows a small, mixed effect, not a clear general benefit. See the [full binary augmentation comparison](../docs/binary-conventional-augmentation.md). Models, executed notebook, paired differences and original-diagnosis results are archived. The test set remains untouched.
+
+## Binary evidence
+
+- `binary_conventional_aug_all_artifacts.zip`: all three selected CNNs, initialization arrays, histories, predictions, metrics, confusion matrices, augmentation configs and manifest.
+- `binary_conventional_aug_results.csv`, `binary_conventional_aug_summary.csv`, `binary_conventional_aug_paired_comparison.csv`: independently verified run results and paired comparisons.
+- `binary_conventional_aug_diagnosis_subtypes.csv`: validation binary classification performance within each original diagnosis.
+- `binary_conventional_aug_config.json`: actual runtime and fixed protocol.
+
+The sections below describe historical eight-class artifacts.
+
 # Experiment artifacts
 
 The verified split contains 1,050 training, 355 validation and 356 test images. The test set has not been evaluated.
