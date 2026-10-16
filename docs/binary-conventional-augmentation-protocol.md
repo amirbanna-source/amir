@@ -1,0 +1,7 @@
+# Binary conventional augmentation protocol
+
+Declared 16 October 2026 before training. Compare against the archived Adam0.0001 no-augmentation baseline, seeds42/43/44. Preserve the classifier architecture, initial weights (SHA256 asserted), split fingerprint, input normalization, batch32, class weights, 31 steps per epoch, maximum25 epochs, patience5, minimum-validation-loss checkpoint and threshold0.5.
+
+Training only: random horizontal/vertical flips, rotation factor0.05 (±18 degrees), height/width zoom factors(-0.1,0.1), reflect fill. Layer seeds are run seed+100/+200/+300. Augmentation is a separate dataset transformation after batching, created after classifier initialization; a sequential map avoids parallel updates to augmentation RNG state. It is not part of validation inference. No class resampling or synthetic-image generation is used.
+
+Report all three runs, mean/sample SD and paired deltas for accuracy, macro F1, balanced accuracy, malignant sensitivity, specificity, ROC-AUC and average precision. Macro F1 is the primary descriptive comparison; disclose metric tradeoffs and seed variation without statistical significance claims from three seeds. Do not extend budgets or tune transforms after seeing results. Preserve checkpoints, configuration, histories, predictions and confusion matrices. Test images remain reserved; this development still shares a validation cohort and is exploratory.
