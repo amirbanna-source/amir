@@ -1,0 +1,49 @@
+{
+  "mapping": {
+    "NV": "benign",
+    "BKL": "benign",
+    "DF": "benign",
+    "VASC": "benign",
+    "MEL": "malignant",
+    "BCC": "malignant",
+    "SCC": "malignant"
+  },
+  "class_weights": {
+    "0": 0.9169811320754717,
+    "1": 1.0995475113122173
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "tensorflow_version": "2.20.0",
+  "split_fingerprint": "4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd",
+  "threshold": 0.5,
+  "test_evaluated": false,
+  "max_epochs": 25,
+  "patience": 5,
+  "batch_size": 32,
+  "steps_per_epoch": 31,
+  "learning_rate": 0.0001,
+  "augmentation": {
+    "training_only": true,
+    "flip": "horizontal_and_vertical",
+    "rotation_factor": 0.05,
+    "zoom_height": [
+      -0.1,
+      0.1
+    ],
+    "zoom_width": [
+      -0.1,
+      0.1
+    ],
+    "fill_mode": "reflect",
+    "layer_seed_offsets": [
+      100,
+      200,
+      300
+    ]
+  },
+  "paired_baseline": "binary_lr0001_no_aug"
+}
