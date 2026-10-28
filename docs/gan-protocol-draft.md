@@ -1,12 +1,14 @@
 # Proposed GAN experiment protocol
 
-Draft revised 14 October 2026 after Amir and Sandra selected benign versus malignant classification, with AK excluded from the primary analysis. No GAN has been trained under this protocol. This draft proposes implementation choices rather than recording completed experiments. See [current methodology](methodology.md) for the authoritative mapping.
+Draft revised 28 October 2026 after completion of the binary conventional-augmentation comparison. The task is benign versus malignant classification, with AK excluded from the primary analysis. No GAN has been trained under this protocol. This draft proposes implementation choices rather than recording completed experiments. See [current methodology](methodology.md) for the authoritative mapping.
 
 ## Existing evidence
 
 The audited source contains 1,761 images. Excluding 129 AK images leaves 1,632 binary-labelled images: 972 training, 329 validation and 331 test. Benign comprises NV/BKL/DF/VASC; malignant comprises MEL/BCC/SCC. Membership is inherited from the audited split. Known lesion groups stay within one split. There are 324 images without lesion IDs and no patient IDs, so complete patient-level independence cannot be established.
 
-The historical eight-class paired study used CNN seeds 42, 43, 44. Mean validation macro F1 was 0.3156 without augmentation and 0.3477 with conventional augmentation. Class-specific gains were uneven. See [paired study](paired-seed-study.md) and [per-class review](paired-per-class-review.md). Historical exploratory runs remain separate.
+The current binary comparison uses CNN seeds 42, 43 and 44, Adam learning rate 0.0001 and the frozen binary split. Mean validation macro F1 was 0.6259 without augmentation and 0.6278 with conventional augmentation. Malignant sensitivity was 0.6200 versus 0.6133, and ROC-AUC was 0.6767 versus 0.6716. Macro F1 improved in two of three matched seeds, while ROC-AUC decreased in all three. This is a small, mixed effect, not established augmentation benefit. See the [binary comparison](binary-conventional-augmentation.md) and [lower-rate baseline](binary-lower-lr-results.md). Earlier eight-class experiments remain historical.
+
+The next experiment is a generator feasibility pilot. It does not yet include downstream classifier training, a main three-seed GAN study or test evaluation.
 
 ## Research question
 
@@ -25,6 +27,36 @@ Proposed pilot budget: 5,000 steps with logs and fixed latent/class grids every 
 Limited-data GANs can overfit. StyleGAN2-ADA is a literature-supported alternative to assess if the simple pilot fails; changing to it requires a new versioned protocol and runtime feasibility check. Discriminator-side augmentation in an ADA generator must be described separately from downstream classifier augmentation.
 
 No external pretrained generator weights are proposed, avoiding an unquantified additional training corpus.
+
+## First pilot execution specification
+
+This section makes the first exploratory pilot reproducible. It is not a frozen main-study protocol.
+
+| Item | First pilot specification |
+| --- | --- |
+| Generator seed | 142; separately record data-order and latent-sampling streams |
+| Input | Frozen 972 training images only: 530 benign, 442 malignant |
+| Budget | Exactly 5,000 completed adversarial steps unless a documented technical failure stops the run |
+| Batch policy | Batch size 32; shuffle and repeat the training stream before batching, with no class balancing |
+| Update policy | One discriminator update and one generator update per step; both optimizers Adam 0.0002, beta1 0.5, beta2 0.999 |
+| Monitoring | Save scalar losses every step; fixed 16-image grid per requested class at steps 0, 500, 1,000, ..., 5,000 |
+| Checkpoints | Save generator, discriminator and both optimizer states every 500 steps; include random-stream state for resume |
+| Candidate checkpoint | Step 5,000 only; earlier grids describe progression rather than select a better-looking checkpoint |
+| Candidate audit pool | 972 outputs: 530 requested benign and 442 requested malignant; dedicated recorded sampling seed 1142 |
+| Downstream training | Deferred until the pilot audit and main-study rules are documented |
+
+Architecture details and exact software versions must be saved in a versioned implementation before execution. In particular, specify channel widths, conditioning mechanism, normalization, activations, initialization and discriminator dropout; the high-level architecture above is insufficient to reconstruct a model.
+
+### Pilot review and stopping rules
+
+1. **Technical failure:** stop and preserve evidence if losses or gradients become non-finite, checkpoint saving fails, or the input-membership check fails. Record the last completed step and cause. Do not silently resume with changed hyperparameters.
+2. **Integrity failure:** stop progression to classifier experiments if any validation/test image entered generator training, an image cannot be decoded, or a generated output falls outside the declared shape/range after conversion.
+3. **Exact-copy audit:** compare hashes of consistently decoded and resized pixels against all real training images and within the generated pool. Retain and report any copies as pilot evidence. Do not replace them in this first audit pool to hide the observed duplication rate.
+4. **Near-copy and diversity review:** save per-class nearest training neighbors, distance distributions and uncurated grids. Calibrate any proposed main-study thresholds using training images only. A pilot without predefined numerical thresholds can characterize these distances but cannot claim to have passed a quantitative novelty gate.
+5. **Visual review:** Amir and Sandra independently flag severe artifacts, obvious collapse/repeated outputs and class ambiguity using the same written rubric. Preserve disagreements and counts. This review does not establish benign/malignant diagnostic correctness.
+6. **Decision record:** report one of: technical failure; completed but requires revision; or completed and suitable for consideration in a main protocol. No outcome automatically authorizes downstream training. Document the review, remaining label uncertainty, chosen audit thresholds and any amendments before main generator runs.
+
+No downstream validation score will be computed during this pilot. The pilot tests implementation, stability, diversity and evidence collection. Success does not imply that synthetic augmentation improves classification.
 
 ## Data boundaries and selection
 
@@ -48,7 +80,7 @@ Primary synthetic pool proposal: one generated image per original training image
 
 For E, draw replacement real images from the training split only, with replacement, matching the synthetic-slot labels in C. This checks whether adding real repeated examples gives similar results. It is a control, not a separate new dataset.
 
-Hold the maximum CNN optimizer steps fixed: 31 batches per epoch, at most 25 epochs, batch size 32 with the same final-batch policy across all new conditions. Use the new binary CNN (same convolutional backbone, one sigmoid output and binary cross-entropy), its training-derived binary class weights, and the same optimizer, preprocessing, dropout seed and validation-loss checkpoint rule across conditions. Fixed prediction threshold: 0.5. Save positive-class probabilities. Use patience 5.
+Hold the maximum CNN optimizer steps fixed: 31 batches per epoch, at most 25 epochs, batch size 32 with the same final-batch policy across all new conditions. Use the new binary CNN (same convolutional backbone, one sigmoid output and binary cross-entropy), its training-derived binary class weights, and Adam learning rate 0.0001, the same preprocessing, dropout seed and validation-loss checkpoint rule across conditions. Fixed prediction threshold: 0.5. Save positive-class probabilities. Use patience 5.
 
 A fixed mixed-source budget reduces real-image presentations relative to A/B. Report that explicitly; this is a fixed-compute comparison, not equal real-image exposure. Do not mix it with a larger-dataset experiment that silently doubles steps. Any equal-real-exposure experiment is secondary and must be specified separately.
 
