@@ -45,6 +45,7 @@ def main(argv=None):
                  sorted(args.input_root.rglob('isic2019_binary_split.csv')))
     assert len(manifests) == 1, 'Attach exactly one archived isic2019_binary_split.csv or pass --manifest'
     train = verify_manifest(pd.read_csv(manifests[0]))
+    print('Frozen manifest verified: 972 training images (530 benign / 442 malignant).', flush=True)
     # Resolve mount changes by image ID. Only training image content is read.
     candidates = {}
     wanted = set(train.image_id)
@@ -52,12 +53,16 @@ def main(argv=None):
         if p.is_file() and p.suffix.lower() in {'.jpg', '.jpeg', '.png'} and p.stem.upper() in wanted:
             candidates.setdefault(p.stem.upper(), []).append(p)
     assert set(candidates) == wanted, 'Some training images are missing'
+    print('Training image paths resolved; checking IDs with multiple file copies.', flush=True)
     paths = []
     for image_id in train.image_id:
         copies = candidates[image_id]
-        hashes = {hashlib.sha256(p.read_bytes()).hexdigest() for p in copies}
-        assert len(hashes) == 1, f'Conflicting image copies: {image_id}'
+        # A single file needs no byte comparison; every selected image is decoded below.
+        if len(copies) > 1:
+            hashes = {hashlib.sha256(p.read_bytes()).hexdigest() for p in copies}
+            assert len(hashes) == 1, f'Conflicting image copies: {image_id}'
         paths.append(copies[0])
+    print('File-copy agreement verified. Loading TensorFlow and decoding images.', flush=True)
     import tensorflow as tf
     from PIL import Image
     images = []
@@ -68,6 +73,8 @@ def main(argv=None):
         x = tf.image.resize(x, [128, 128]).numpy() / 127.5 - 1
         assert x.shape == (128, 128, 3) and np.isfinite(x).all()
         images.append(x)
+        if len(images) % 100 == 0 or len(images) == len(paths):
+            print(f'Decoded {len(images)}/{len(paths)} training images', flush=True)
     images = np.stack(images)
     labels = train.target.to_numpy(dtype=np.int32)
     print('Preflight passed:', len(images), 'training images; counts', train.target.value_counts().to_dict())
