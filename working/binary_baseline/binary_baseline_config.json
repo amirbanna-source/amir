@@ -1,0 +1,29 @@
+{
+  "mapping": {
+    "NV": "benign",
+    "BKL": "benign",
+    "DF": "benign",
+    "VASC": "benign",
+    "MEL": "malignant",
+    "BCC": "malignant",
+    "SCC": "malignant"
+  },
+  "class_weights": {
+    "0": 0.9098513011152416,
+    "1": 1.1099773242630386
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "tensorflow_version": "2.16.2",
+  "split_fingerprint": "b02d516505aec91170de557bb25d341509b390aa7806547ff91015f7f47a0e9c",
+  "threshold": 0.5,
+  "test_evaluated": false,
+  "max_epochs": 25,
+  "patience": 5,
+  "batch_size": 32,
+  "steps_per_epoch": 31,
+  "learning_rate": 0.001
+}
