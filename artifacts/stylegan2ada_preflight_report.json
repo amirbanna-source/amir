@@ -1,0 +1,23 @@
+{
+  "status": "data_and_official_dry_run_passed_gpu_runtime_blocked",
+  "training_launched": false,
+  "optimizer_updates": 0,
+  "image_count": 972,
+  "class_counts": {
+    "0": 530,
+    "1": 442
+  },
+  "dataset_sha256": "028216f4780719022b0200463c0e411a5cc18b64b4f4460e55c49a227a287f6d",
+  "split_sha256": "4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd",
+  "environment": {
+    "python": "3.13.18",
+    "torch": "2.11.0+cpu",
+    "cuda": null,
+    "cuda_available": false,
+    "upstream_commit": "d72cc7d041b42ec8e806021a205ed9349f87c6a4"
+  },
+  "nvidia_smi_available": false,
+  "nvidia_smi_output": null,
+  "dry_run_passed": true,
+  "limitations": "CUDA execution, kernel compilation and model learning remain untested. UI T4 selection did not provide CUDA in this session."
+}
