@@ -1,2 +1,0 @@
-seed,condition,epochs_trained,selected_epoch,validation_loss,accuracy,macro_f1,balanced_accuracy,malignant_sensitivity,specificity,roc_auc,average_precision,threshold,initial_weights_sha256,split_fingerprint,test_evaluated
-42,binary_no_aug,13,8,0.6919951438903809,0.5474006116207951,0.35375494071146246,0.5,0.0,1.0,0.4453042427902763,0.42542660347829747,0.5,f0b9a0ddce8f8452c7308e6e7ae6c7d37f9d3b7eb850da4831cbb7f2651b3953,b02d516505aec91170de557bb25d341509b390aa7806547ff91015f7f47a0e9c,False
