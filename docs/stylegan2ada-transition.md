@@ -1,5 +1,20 @@
 # Transition to official StyleGAN2-ADA — 10 November 2026
 
+## Execution update — 10 November 2026
+
+The training-data export and official configuration dry run have now **passed** in Kaggle. Training has **not** started. This update supersedes the original unexecuted-preparation status below.
+
+- Frozen binary manifest reused from `amirsalahk/isic-2019-verified-binary-split`; fingerprint unchanged.
+- Export: 972 RGB images at 128x128, 530 benign / 442 malignant. CRC, labels, duplicate training copies and split validation passed. Held-out image contents were not read by the exporter.
+- Dataset ZIP SHA256: `028216f4780719022b0200463c0e411a5cc18b64b4f4460e55c49a227a287f6d`.
+- Official dry run exited successfully: one configured GPU, conditional labels, batch 16, ADA geometry, seed 142, 20 kimg. This validates data/configuration, not CUDA execution or learned sample quality.
+- **Runtime blocker:** Kaggle UI selected T4 x2, but this session reported Python 3.13.18, PyTorch 2.11.0+cpu, no CUDA, and no `nvidia-smi` executable. A working GPU runtime must be established before training. No GPU kernels or model optimization were tested; training remains disabled.
+- Kaggle Version 1, “Data and dry run passed - GPU runtime blocked”, was Quick Saved with output retention; completion observed. Session stopped.
+- Notebook: https://www.kaggle.com/code/amirsalahk/11-isic-official-stylegan2-ada-setup/edit
+- Evidence: [machine-readable report](../artifacts/stylegan2ada_preflight_report.json) and executed notebook 11. Full export, audit, source pin and dry-run log are in saved Kaggle outputs. Downloaded archive integrity and dataset hash were independently checked.
+- Initial missing-manifest assertion was resolved by attaching the existing frozen split. An initial unguarded hardware diagnostic failed because `nvidia-smi` was absent; the saved final report handles its absence explicitly.
+- Next: restore a GPU-backed Kaggle session, recheck torch/CUDA/hardware and compiler compatibility, then obtain feasibility-run results before any full training or downstream synthetic augmentation.
+
 ## Decision and boundaries
 
 Amir requested an existing GAN rather than further development of the project's custom implementation. The next candidate is the **official NVIDIA StyleGAN2-ADA PyTorch implementation**, conditional on benign/malignant labels. Custom GAN notebooks 09 and 10 remain historical feasibility/diagnostic work; further custom architecture and BatchNorm ablations are paused.
