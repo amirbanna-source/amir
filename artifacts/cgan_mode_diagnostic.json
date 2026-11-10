@@ -1,0 +1,35 @@
+{
+  "tensorflow": "2.21.0",
+  "python": "3.13.18",
+  "pilot_tensorflow": "2.20.0",
+  "runtime_matches_pilot": false,
+  "runtime_drift_explicitly_allowed": true,
+  "model_file": "/kaggle/input/notebooks/amirsalahk/09-isic-binary-conditional-gan-pilot/binary_cgan_pilot/generator_step05000.keras",
+  "model_file_sha256": "a67c5a17e94f8e07540658818c071ddf9481203321fa4b7f279751097a88fdbb",
+  "noise_seed": 4142,
+  "batch_size": 32,
+  "model_state_restored": true,
+  "optimizer_updates": 0,
+  "results": {
+    "all_benign": {
+      "mode_mean_absolute_difference": 0.1058327779173851,
+      "inference_mean_pixel_sd": 0.03354823961853981,
+      "training_mean_pixel_sd": 0.04649041220545769
+    },
+    "all_malignant": {
+      "mode_mean_absolute_difference": 0.10518241673707962,
+      "inference_mean_pixel_sd": 0.03405648469924927,
+      "training_mean_pixel_sd": 0.047614481300115585
+    },
+    "mixed": {
+      "mode_mean_absolute_difference": 0.1055193543434143,
+      "inference_mean_pixel_sd": 0.033891040831804276,
+      "training_mean_pixel_sd": 0.047190334647893906
+    },
+    "same_noise_class_change_mae": {
+      "training": 0.0018734103068709373,
+      "inference": 0.0023370811250060797
+    }
+  },
+  "limitations": "Descriptive only; no pass threshold, causal proof, clinical validity, or memorization assessment. Training-mode output depends on batch composition."
+}
