@@ -7,6 +7,7 @@ python diagnose_cgan_modes.py --model /path/generator_step05000.keras \
 import argparse
 import hashlib
 import json
+import platform
 from pathlib import Path
 
 
@@ -14,12 +15,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--model', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--allow-runtime-drift', action='store_true',
+                        help='Explicit exploratory comparison in a different TensorFlow version')
     args = parser.parse_args()
     import numpy as np
     import tensorflow as tf
     from PIL import Image
 
-    assert tf.__version__ == '2.20.0', 'Use the pilot runtime for comparison'
+    assert tf.__version__ == '2.20.0' or args.allow_runtime_drift, 'Use the pilot runtime or explicitly allow runtime drift'
     assert not args.output.exists(), 'Choose a fresh output directory'
     model = tf.keras.models.load_model(args.model, compile=False)
     original = model.get_weights()
@@ -59,7 +62,10 @@ def main():
             canvas.paste(Image.fromarray(np.clip(pixels * 255, 0, 255).round().astype('uint8')),
                          ((j % 4) * 128, (j // 4) * 128))
         canvas.save(args.output / f'{name}.png')
-    report = {'tensorflow': tf.__version__, 'model_file': str(args.model),
+    report = {'tensorflow': tf.__version__, 'python': platform.python_version(),
+              'pilot_tensorflow': '2.20.0', 'runtime_matches_pilot': tf.__version__ == '2.20.0',
+              'runtime_drift_explicitly_allowed': args.allow_runtime_drift,
+              'model_file': str(args.model),
               'model_file_sha256': hashlib.sha256(args.model.read_bytes()).hexdigest(),
               'noise_seed': 4142, 'batch_size': 32, 'model_state_restored': True,
               'optimizer_updates': 0, 'results': results,
