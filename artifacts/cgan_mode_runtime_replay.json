@@ -1,0 +1,12 @@
+{
+  "0": {
+    "mean_absolute_uint8_difference": 5.086263172415784e-06,
+    "max_uint8_difference": 1.0,
+    "fraction_channel_values_different": 5.086263020833333e-06
+  },
+  "1": {
+    "mean_absolute_uint8_difference": 8.900959983293433e-06,
+    "max_uint8_difference": 1.0,
+    "fraction_channel_values_different": 8.900960286458334e-06
+  }
+}
