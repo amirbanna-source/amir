@@ -2,7 +2,7 @@
 
 Master's thesis work by **Amir Albana**. The current task is **binary classification**: benign (NV/BKL/DF/VASC) versus malignant (MEL/BCC/SCC), excluding AK. The study compares no augmentation, conventional augmentation, GAN augmentation and their combination.
 
-## Current binary status (30 October 2026)
+## Current binary status (10 November 2026)
 
 The verified binary subset contains **1,632 images**: **972 training / 329 validation / 331 test**. Original split membership is preserved. Class counts are 894 benign and 738 malignant. The same 324 images lack lesion IDs; patient IDs remain unavailable. The test set has not been evaluated.
 
@@ -13,6 +13,8 @@ Training-only [CNN diagnostics](docs/binary-training-diagnostics.md) are complet
 Conventional augmentation is complete for all three matched seeds. Mean validation accuracy was **63.02%** versus **62.82%** without augmentation; macro F1 **0.6278** versus **0.6259**. Macro F1 improved in two seeds, but malignant sensitivity fell to **61.33%** and ROC-AUC decreased in every seed. This fixed candidate shows a small, mixed effect, not a clear general benefit. See the [full binary augmentation comparison](docs/binary-conventional-augmentation.md). Models, executed notebook, paired differences and original-diagnosis results are archived. The test set remains untouched.
 
 The first conditional GAN feasibility pilot completed **5,000 steps** with seed 142 on 30 October 2026. Both final models were reloaded and all 972 audit-image hashes reproduced. **The generated images are unsuitable for CNN augmentation:** fixed grids show repeated structures and checkerboard artifacts, with weak visual class differentiation. This is a completed pilot requiring revision, not an augmentation benefit. All checkpoints, grids, models and the unfiltered pool are preserved in Kaggle Version 2 with outputs saved. See the [pilot results and verification](docs/binary-cgan-pilot-results.md). No downstream classifier training or test evaluation was performed.
+
+The saved-generator [BatchNorm diagnostic](docs/gan-mode-diagnostic.md) is complete. Both modes still show collapse; the mode mismatch is a plausible contributor, not a proven cause. Following Amir's decision, further custom-GAN development is paused. The next candidate uses **NVIDIA's official StyleGAN2-ADA PyTorch implementation**, with source pinned and no project-specific GAN architecture. [Notebook 11](notebooks/11_isic2019_official_stylegan2ada.ipynb) and a training-only exporter are prepared; actual Kaggle/PyTorch compatibility, real-image export, dry run and training remain unexecuted. No pretrained dermoscopy weights are claimed. See the [transition protocol](docs/stylegan2ada-transition.md).
 
 ## Historical eight-class experiments
 
