@@ -1,6 +1,6 @@
 # Sandra's fixed StyleGAN2-ADA pilot
 
-Use the complete **StyleGAN2ADA_Pilot_Ready.zip** handoff delivered to Amir. This GitHub directory is a readable code mirror; it deliberately omits the training images and bundled NVIDIA source. Copying this directory alone is not the complete runnable package.
+Use the complete **StyleGAN2ADA_Pilot_Ready.zip** handoff shared separately with Sandra. **Do not upload the training images or the complete handoff ZIP to GitHub.** This GitHub directory is a readable code mirror; it omits the training images and bundled NVIDIA source. Copying this directory alone is not the complete runnable package.
 
 ## Run
 

@@ -2,6 +2,10 @@
 
 Master's thesis work by **Amir Albana**. The current task is **binary classification**: benign (NV/BKL/DF/VASC) versus malignant (MEL/BCC/SCC), excluding AK. The study compares no augmentation, conventional augmentation, GAN augmentation and their combination.
 
+## Campus pilot handoff (11 November 2026)
+
+The [campus pilot code and run instructions](handoff/stylegan_pilot/README.md) are available here. The complete `StyleGAN2ADA_Pilot_Ready.zip`, including training images, is shared separately with Sandra and must not be uploaded to GitHub. Extract that package and run `bash START_PILOT.sh` inside `StyleGAN2ADA_Pilot` on the campus Linux GPU machine. The 20-kimg training run has not yet been performed.
+
 ## Current binary status (10 November 2026)
 
 The verified binary subset contains **1,632 images**: **972 training / 329 validation / 331 test**. Original split membership is preserved. Class counts are 894 benign and 738 malignant. The same 324 images lack lesion IDs; patient IDs remain unavailable. The test set has not been evaluated.
