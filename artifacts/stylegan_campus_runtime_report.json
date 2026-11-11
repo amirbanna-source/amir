@@ -1,0 +1,81 @@
+{
+  "status": "gpu_and_targeted_runtime_checks_passed",
+  "hardware": {
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "torch_cuda": "13.0",
+    "cuda_available": true,
+    "gpu_count": 2,
+    "nvidia_smi": "/opt/bin/nvidia-smi",
+    "nvcc": "/usr/local/cuda/bin/nvcc",
+    "training_launched": false,
+    "nvidia-smi_output": "Tesla T4, 580.178.04, 15360 MiB\nTesla T4, 580.178.04, 15360 MiB\n",
+    "nvcc_output": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Wed_Aug_20_01:58:59_PM_PDT_2025\nCuda compilation tools, release 13.0, V13.0.88\nBuild cuda_13.0.r13.0/compiler.36424714_0\n",
+    "cuda_tensor_test": true,
+    "gpu_names": [
+      "Tesla T4",
+      "Tesla T4"
+    ]
+  },
+  "cuda_ops": {
+    "environment": {
+      "python": "3.13.16",
+      "torch": "2.11.0+cu130",
+      "cuda": "13.0",
+      "cuda_available": true,
+      "upstream_commit": "d72cc7d041b42ec8e806021a205ed9349f87c6a4"
+    },
+    "upstream_commit": "d72cc7d041b42ec8e806021a205ed9349f87c6a4",
+    "training_launched": false,
+    "optimizer_updates": 0,
+    "tests": {
+      "bias_act": {
+        "passed": true,
+        "compiled_plugin_loaded": true,
+        "max_forward_error": 7.152557373046875e-7,
+        "forward_backward_second_derivative": true
+      },
+      "upfirdn2d": {
+        "passed": true,
+        "compiled_plugin_loaded": true,
+        "max_forward_error": 0,
+        "forward_backward_second_derivative": true
+      }
+    },
+    "all_passed": true
+  },
+  "network_check": {
+    "training_launched": false,
+    "optimizer_updates": 0,
+    "real_images_read": false,
+    "resolution": 128,
+    "c_dim": 2,
+    "tests": {
+      "generator_discriminator_backward": true,
+      "augmentation_and_r1_double_backward": true,
+      "path_length_double_backward": true
+    },
+    "passed": true
+  },
+  "loader_patch": {
+    "upstream_commit": "d72cc7d041b42ec8e806021a205ed9349f87c6a4",
+    "file": "torch_utils/custom_ops.py",
+    "original_sha256": "ee123ae0458fbe463000d5962a5b804d9e91b25d3fda8500eeaa6ddf6b5c932a",
+    "patched_sha256": "40d05549b526f9335f464e6bcb4d43f4cf0390b42dd1396840aa3d0f894f119d",
+    "reason": "Use cpp_extension.load returned Python module instead of a second import by name.",
+    "architecture_changed": false,
+    "cuda_kernel_source_changed": false
+  },
+  "grid_patch": {
+    "source": "https://github.com/NVlabs/stylegan3/blob/main/torch_utils/ops/grid_sample_gradfix.py",
+    "changes": "Port NVIDIA newer API handling: use enabled gradfix, operation tuple[0], backward output_mask. Target runtime PyTorch 2.11 only.",
+    "original_sha256": "a49a8195b734ecba95c9b63d035f26faa5d794a0b26eb3e9d5f3c521be29c536",
+    "patched_sha256": "799688e16c12c19e5c7dbd69a349c2a02e79b905263e694d4df363e3cafa874b",
+    "architecture_changed": false
+  },
+  "conv2d_gradfix_native_fallback": true,
+  "training_launched": false,
+  "optimizer_updates": 0,
+  "real_image_content_read": false,
+  "limitations": "Targeted synthetic checks only; full training loop, checkpointing and model quality remain unvalidated."
+}
