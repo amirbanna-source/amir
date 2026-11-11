@@ -1,5 +1,25 @@
 # Transition to official StyleGAN2-ADA — 10 November 2026
 
+## GPU runtime update — 11 November 2026
+
+The initial CPU-session blocker is **resolved in a fresh Kaggle GPU session**. Observed Python 3.13.16, PyTorch 2.11.0+cu130, CUDA/compiler 13.0, driver 580.178.04, two Tesla T4 GPUs (15,360 MiB each). A CUDA tensor calculation passed.
+
+The pinned NVIDIA code required two explicit API compatibility patches:
+1. [Extension loader](../patches/stylegan_pytorch_loader.patch): use the Python module returned by PyTorch's extension loader, rather than importing the module by name a second time.
+2. [Grid-sampling gradients](../patches/stylegan_grid_gradfix.patch): adapt NVIDIA's newer official StyleGAN3 API handling (operation tuple access and backward output mask) and enable the gradient fix on the tested modern runtime. Reference: https://github.com/NVlabs/stylegan3/blob/main/torch_utils/ops/grid_sample_gradfix.py
+
+No GAN architecture, objective, augmentation policy, or CUDA kernel source was changed. PyTorch's native convolution fallback remains active and was included in the synthetic network checks.
+
+**Passed:** compiled bias_act and upfirdn2d (explicitly confirmed plugin loaded; no reference fallback counted as a compilation pass), reference agreement for outputs/first/second derivatives; official 128x128 conditional G/D backward; ADA geometry plus R1 double-backward. Maximum forward differences were 4.76837158203125e-7 and 0.0 respectively.
+
+**Scope:** synthetic tensors and randomly initialized networks only; no real-image contents read, no optimizer updates, no fitting, no pretrained weights, no trained model saved. Path-length regularization, the complete training loop/checkpointing, convergence and generated-image quality remain unvalidated.
+
+Saved Kaggle Version 2: “GPU and CUDA checks passed - no training”, Quick Save with outputs; completion observed, session stopped. The original verified image export remains in Version 1. Notebook 11 is a chronological execution record with historical CPU outputs and patch/test cells; do not treat its current cell ordering as the clean launch workflow.
+
+- [Runtime report](../artifacts/stylegan_gpu_runtime_report.json) includes original failures, patch hashes, runtime, and passing checks.
+- [Fresh runtime script](../scripts/verify_stylegan2ada_runtime.py) and [notebook 12](../notebooks/12_stylegan2ada_runtime_verification.ipynb) consolidate the tested operations in sequential order. Their code compiles; this consolidated entry point has not itself been executed end to end. It requires a fresh output directory.
+- Next experiment: a separately recorded 20-kimg feasibility pilot using the frozen training export and compatibility patches. **Not launched.**
+
 ## Execution update — 10 November 2026
 
 The training-data export and official configuration dry run have now **passed** in Kaggle. Training has **not** started. This update supersedes the original unexecuted-preparation status below.
