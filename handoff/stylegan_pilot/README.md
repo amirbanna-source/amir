@@ -40,3 +40,7 @@ Preserve `results/pilot_seed142/`, including the state file, environment, patche
 Data CRC/hash, all image modes/dimensions, labels, IDs, code compilation and shell syntax were checked. Guard checks used mocked GPU metadata only to verify that preparation cannot launch training and started runs are refused. The runtime-check sequence passed on a real Kaggle T4 / PyTorch 2.11.0+cu130 / CUDA 13 environment, including production mixed precision, R1 and path-length double-backward; [the report is here](../../artifacts/stylegan_campus_runtime_report.json). The runtime test cloned the exact pinned source; the bundle's copy was separately verified against that pin and file hashes.
 
 **The 20-kimg pilot has not run.** The Docker definition uses an official published image but has not been built here, and campus hardware/driver/container permissions have not been tested. Full training, checkpoint completion and image quality remain to be evaluated by Sandra's run. Validation and test images are absent from this package.
+
+## Review after execution
+
+Use the [pilot evaluation checklist](../../docs/stylegan2ada-pilot-evaluation.md) and [results template](../../docs/stylegan2ada-pilot-results-template.md) when campus outputs return. These prospective documents do not change the supplied training package. Keep all image evidence and the complete ZIP off GitHub.
