@@ -44,3 +44,17 @@ Data CRC/hash, all image modes/dimensions, labels, IDs, code compilation and she
 ## Review after execution
 
 Use the [pilot evaluation checklist](../../docs/stylegan2ada-pilot-evaluation.md) and [results template](../../docs/stylegan2ada-pilot-results-template.md) when campus outputs return. These prospective documents do not change the supplied training package. Keep all image evidence and the complete ZIP off GitHub.
+
+## Automatic checks after outputs return
+
+From the repository root, run:
+
+```bash
+python scripts/review_stylegan_pilot.py /private/path/to/results/pilot_seed142
+```
+
+The read-only checker requires Python and Pillow (`python -m pip install Pillow` if needed). It prints a JSON report and exits 0 only when all implemented technical checks pass; exit 1 means missing, failed, or inconsistent evidence. It checks recorded settings, hashes, runtime status, the logged budget, a uniquely located final checkpoint, all 16 seed images per class, and both grids. It hashes the checkpoint without loading it.
+
+It never starts training or changes the returned results. It does not establish image quality, diversity, clinical correctness or absence of memorization, and is not a substitute for reviewing the full logs. A failed export can coexist with completed training: use the individual checks to diagnose the result. Keep returned files and reports private until reviewed.
+
+Validation: synthetic fixtures covered a complete evidence set, missing outputs, checkpoint modification, corrupt sample images, failed state and malformed state JSON. Campus outputs have not yet been checked.
