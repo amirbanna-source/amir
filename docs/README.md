@@ -2,6 +2,7 @@
 
 Start with the current [Methods chapter](methodology.md), updated 13 November 2026. It separates completed experiments from the campus pilot and downstream comparisons still pending.
 
+- [Results chapter](results.md)
 - [Dataset audit](data-audit.md)
 - [Original binary baseline](binary-baseline.md)
 - [Revised baseline and optimizer comparison](binary-lower-lr-results.md)
