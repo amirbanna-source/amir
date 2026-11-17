@@ -18,3 +18,9 @@ __pycache__/
 venv/
 .env
 docs/.Rhistory
+
+# Private outputs of the local synthetic classifier comparisons
+/results/local_comparisons/
+
+# Private frozen metadata input for the local comparison notebooks
+/artifacts/isic2019_frozen_binary_split_1632.csv

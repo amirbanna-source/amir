@@ -12,6 +12,17 @@
 
 StyleGAN2-ADA still uses benign/malignant class conditioning. It replaces the earlier custom GAN implementation. You do not need to run all GAN notebooks in sequence.
 
+## Local classifier comparisons using synthetic images
+
+These are separate classifier conditions, after a reviewed StyleGAN2-ADA pool is available. They do not retrain the GAN.
+
+| Notebook | Local training condition |
+| --- | --- |
+| [14 — Real + GAN](14_isic2019_real_plus_gan_local.ipynb) | Mixed real/synthetic training images, no conventional transformations |
+| [15 — Real + GAN + conventional](15_isic2019_real_plus_gan_conventional_local.ipynb) | The same mixed pool and schedule, with conventional transformations on both sources |
+
+Both are prepared, not executed, and run in local Jupyter or VS Code. See [local setup, frozen split and pool requirements](../docs/local-gan-classifier-comparisons.md). They use the separately named frozen 1,632-image manifest matching the completed study, not the different current split CSV. Real validation stays unaugmented; test-image contents are never loaded.
+
 ## Archived custom GAN experiments
 
 [Archive index](archive/README.md): notebooks 09 and 10 preserve the completed custom conditional GAN pilot and its mode diagnostic. They are not part of the active StyleGAN2-ADA workflow. Code cells and recorded outputs have been preserved. Do not rerun them as setup for the current pilot or use the old synthetic pool for classifier augmentation.
