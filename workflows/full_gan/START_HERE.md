@@ -1,6 +1,6 @@
 # Public code mirror
 
-This directory contains code only. Use the complete private `ISIC_Full_GAN_Workflows.zip` handoff for bundled NVIDIA source, split metadata, GAN input and CNN initial weights. Original CNN images must also be supplied privately. Do not publish the ZIP or data folders.
+This directory contains code only. Use the complete private `ISIC_Full_GAN_Workflows.zip` handoff, now including all 972 original training and 329 validation images, bundled NVIDIA source, fixed split and CNN starting weights. Do not publish the ZIP or data folders.
 
 # Full GAN and GAN + conventional workflows
 
@@ -26,13 +26,13 @@ This reuses the same completed GAN and synthetic pool and trains the CNN with co
 
 `GAN.ipynb` and `GAN_PLUS_CONVENTIONAL.ipynb` provide the equivalent Run All entry points from this same extracted folder. On a managed cluster, the kernel must be in the allocated GPU session; running a notebook on a login node does not allocate a GPU.
 
-## What is supplied and what is still missing
+## Complete data handoff
 
 Supplied: the frozen 1,632-image split metadata, GAN-prepared 972-image training ZIP and source audit, official pinned NVIDIA source/license, compatibility checks, archived CNN starting weights for all three seeds, the workflow code, dependency definitions, launchers and notebooks.
 
-**Not supplied: the original 972 training and 329 validation image files used by the CNN.** Put the original dataset folder under `data/real/` once. Subdirectories and extra source files are allowed; the workflow reads only required training/validation contents. `data/required_real_images.csv` lists the 1,301 required image IDs. Original training-byte hashes are verified against the saved audit. The GAN-prepared resized PNGs are not substituted for original CNN images because that would change preprocessing relative to the completed comparisons.
+**Included: all original 972 training and 329 validation image files used by the CNN, already placed under `data/real/`.** No separate dataset download or manual image copying is needed. `data/required_real_images.csv` lists the 1,301 included image IDs. All 972 training-file byte hashes match the saved GAN export source audit, and all required originals passed ZIP CRC and RGB decoding checks. Original CNN images are used rather than substituting the resized GAN export.
 
-Until the original image folder is added, this is a prepared code/data handoff with a known missing input, not a fully executable self-contained study package. The launchers will stop and list missing files before GAN fitting. No held-out test image content is required.
+The data dependency is now complete: the two workflows use the included originals and fixed metadata automatically. Integrity checks still stop execution if supplied files are removed or changed. Held-out test images are not included, and no test-image contents were opened during extraction. Cluster software/hardware compatibility remains to be checked on the actual campus system.
 
 ## Frozen means fixed membership
 
@@ -70,6 +70,6 @@ Keep the entire `results/` directory: full GAN snapshots/logs, generated pool an
 
 ## Validation scope
 
-Performed here: source/notebook Python compilation, shell syntax, archived initialization-array hashes, fixed split fingerprint/counts, exact classifier architecture match, deterministic source/class sampling, generated-pool input guards, and orchestration tests with synthetic fixtures/stubbed subprocesses. Input inventory confirms that original CNN images are absent from this handoff.
+Performed here: source/notebook Python compilation, shell syntax, archived initialization-array hashes, fixed split fingerprint/counts, exact classifier architecture match, deterministic source/class sampling, generated-pool input guards, and orchestration tests with synthetic fixtures/stubbed subprocesses. Real-data verification now confirms 972 original training images and 329 original validation images, matching the frozen membership and expected class counts. All 972 training source-byte hashes match the existing audit; all selected archive entries passed CRC and RGB decoding. Twenty-one redundant source copies also agreed byte-for-byte. No test image content was read. See `data/original_image_verification.json`.
 
 Not performed here: container pulls/builds, campus scheduler allocation, GPU training, full GAN optimization, TensorFlow fitting or completed model-quality evaluation. This package cannot honestly be called campus-tested or guaranteed error-free before those checks are run on the actual cluster.

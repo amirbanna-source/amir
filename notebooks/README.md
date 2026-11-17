@@ -9,7 +9,7 @@
 
 Run either notebook from the complete extracted private **ISIC_Full_GAN_Workflows** package inside an allocated Linux/NVIDIA GPU session. The equivalent shell entry points are `GAN.sh` and `GAN_PLUS_CONVENTIONAL.sh`. The second condition can create the same full GAN/pool if absent. Run sequentially.
 
-There is no 20-kimg pilot stage and no manual approval JSON requirement. Integrity/runtime checks run automatically. The private package supplies the original fixed 1,632-image split and archived CNN starting weights; original 972 training +329 validation image files must still be placed under `data/real/`. It is not self-contained until those originals are supplied. Cluster allocation/container support remain site-specific and untested here.
+There is no 20-kimg pilot stage and no manual approval JSON requirement. Integrity/runtime checks run automatically. The private package supplies the original fixed 1,632-image split and archived CNN starting weights; all original 972 training +329 validation images are now included under `data/real/` in the private ZIP. The data handoff is complete; all 972 training source hashes and all 1,301 original image decodes were verified. Cluster allocation/container support remain site-specific and untested here.
 
 [Full setup, inputs, recipe and limitations](../workflows/full_gan/START_HERE.md). These workflows are prepared, not executed. They do not establish image quality or clinical validity by completing. Validation stays real-only and test-image contents are never loaded.
 
