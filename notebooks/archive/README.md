@@ -12,7 +12,7 @@ Code cells and recorded outputs were preserved during the move. Relative documen
 - [Pilot results](../../docs/binary-cgan-pilot-results.md)
 - [Mode diagnostic results](../../docs/gan-mode-diagnostic.md)
 - [Current notebook index](../README.md)
-- [Active StyleGAN2-ADA pilot](../13_isic2019_stylegan2ada_pilot.ipynb)
+- [Active StyleGAN2-ADA pilot](13_isic2019_stylegan2ada_pilot.ipynb)
 
 Supporting historical scripts and reports remain in their original repository locations. Training images and image-containing ZIP packages must remain off GitHub.
 
