@@ -1,31 +1,26 @@
 # Notebooks
 
-## Current GAN workflow
+## Current workflows: no pilot stage
 
-**[Notebook 13: StyleGAN2-ADA pilot](13_isic2019_stylegan2ada_pilot.ipynb) is the main entry point.** Run it inside the complete extracted campus package on the documented GPU environment. The repository copy alone does not include its training images or bundled source. See the [campus run instructions](../handoff/stylegan_pilot/README.md).
-
-| Notebook | Role | When to use |
-| --- | --- | --- |
-| [13 — StyleGAN2-ADA pilot](13_isic2019_stylegan2ada_pilot.ipynb) | Current packaged pilot | Run from the complete campus package; automatic checks precede training |
-| [11 — Official setup record](11_isic2019_official_stylegan2ada.ipynb) | Historical export, dry-run and compatibility evidence | Consult for provenance; historical cell order is not a clean launch workflow |
-| [12 — Runtime verification](12_stylegan2ada_runtime_verification.ipynb) | Standalone troubleshooting tool | Consult for separate CUDA checks; not an additional required step before notebook 13 |
-
-StyleGAN2-ADA still uses benign/malignant class conditioning. It replaces the earlier custom GAN implementation. You do not need to run all GAN notebooks in sequence.
-
-## Local classifier comparisons using synthetic images
-
-These are separate classifier conditions, after a reviewed StyleGAN2-ADA pool is available. They do not retrain the GAN.
-
-| Notebook | Local training condition |
+| Notebook | Full local/cluster workflow |
 | --- | --- |
-| [14 — Real + GAN](14_isic2019_real_plus_gan_local.ipynb) | Mixed real/synthetic training images, no conventional transformations |
-| [15 — Real + GAN + conventional](15_isic2019_real_plus_gan_conventional_local.ipynb) | The same mixed pool and schedule, with conventional transformations on both sources |
+| [14 — GAN](14_isic2019_real_plus_gan_local.ipynb) | Train official conditional StyleGAN2-ADA for 2,000 kimg, generate a fixed pool, then train the real + GAN CNN |
+| [15 — GAN + conventional](15_isic2019_real_plus_gan_conventional_local.ipynb) | Reuse that GAN/pool and train the CNN with conventional transformations on both real and synthetic images |
 
-Both are prepared, not executed, and run in local Jupyter or VS Code. See [local setup, frozen split and pool requirements](../docs/local-gan-classifier-comparisons.md). They use the separately named frozen 1,632-image manifest matching the completed study, not the different current split CSV. Real validation stays unaugmented; test-image contents are never loaded.
+Run either notebook from the complete extracted private **ISIC_Full_GAN_Workflows** package inside an allocated Linux/NVIDIA GPU session. The equivalent shell entry points are `GAN.sh` and `GAN_PLUS_CONVENTIONAL.sh`. The second condition can create the same full GAN/pool if absent. Run sequentially.
 
-## Archived custom GAN experiments
+There is no 20-kimg pilot stage and no manual approval JSON requirement. Integrity/runtime checks run automatically. The private package supplies the original fixed 1,632-image split and archived CNN starting weights; original 972 training +329 validation image files must still be placed under `data/real/`. It is not self-contained until those originals are supplied. Cluster allocation/container support remain site-specific and untested here.
 
-[Archive index](archive/README.md): notebooks 09 and 10 preserve the completed custom conditional GAN pilot and its mode diagnostic. They are not part of the active StyleGAN2-ADA workflow. Code cells and recorded outputs have been preserved. Do not rerun them as setup for the current pilot or use the old synthetic pool for classifier augmentation.
+[Full setup, inputs, recipe and limitations](../workflows/full_gan/START_HERE.md). These workflows are prepared, not executed. They do not establish image quality or clinical validity by completing. Validation stays real-only and test-image contents are never loaded.
+
+## Supporting historical setup
+
+- [11 — Official setup record](11_isic2019_official_stylegan2ada.ipynb): chronological export and compatibility evidence.
+- [12 — Runtime verification](12_stylegan2ada_runtime_verification.ipynb): standalone diagnostic reference; not an additional required notebook before the full workflows.
+
+## Archive
+
+[Archive index](archive/README.md): the old custom GAN notebooks 09/10 and superseded 20-kimg pilot notebook 13 are retained as history, outside the active workflow.
 
 ## Other notebooks
 

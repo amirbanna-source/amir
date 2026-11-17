@@ -2,6 +2,12 @@
 
 Working thesis Methods draft, updated 13 November 2026. This version describes completed procedures in the past tense and identifies unexecuted components explicitly. The original multiclass work is preliminary; the current task is binary classification.
 
+## Execution revision — 17 November 2026
+
+The previously proposed 20-kimg StyleGAN2-ADA pilot is superseded. The selected next candidate is a **full 2,000-kimg run** on the original 972-image training cohort, followed by automatic generation of a fixed 530/442 synthetic pool and two separate CNN workflows: real + GAN and real + GAN with conventional transformations. The shared GAN/pool and archived seed-specific CNN starting weights are reused. No manual approval JSON is required for execution; image-quality and near-copying limitations must still be assessed when interpreting results.
+
+This revision uses the original frozen 1,632-image cohort, excluding AK. It is supplied privately in the new package and differs from the later 1,761-image CSV currently in the repository. Original CNN training/validation image files are a missing input to that package. The full workflows are prepared, not executed or campus-tested. See the [current execution recipe](../workflows/full_gan/START_HERE.md). This revision supersedes the earlier pilot-specific launch settings below; completed experiment methods are unchanged.
+
 ## 1. Study design and experimental status
 
 The study investigates whether training-data augmentation improves a convolutional neural network (CNN) for classifying skin-lesion images into the study-defined benign and malignant groups. The intended comparison includes no augmentation, conventional image augmentation, GAN-generated training images, and GAN-generated images combined with conventional augmentation. All conditions use the same frozen image split. Only the no-augmentation and conventional-augmentation classifier conditions have been completed.

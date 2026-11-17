@@ -15,3 +15,7 @@ Code cells and recorded outputs were preserved during the move. Relative documen
 - [Active StyleGAN2-ADA pilot](../13_isic2019_stylegan2ada_pilot.ipynb)
 
 Supporting historical scripts and reports remain in their original repository locations. Training images and image-containing ZIP packages must remain off GitHub.
+
+## Superseded StyleGAN2-ADA pilot
+
+[13 — Old 20-kimg pilot](13_isic2019_stylegan2ada_pilot.ipynb) is archived as of 17 November 2026. The active workflows are [14 — full GAN](../14_isic2019_real_plus_gan_local.ipynb) and [15 — full GAN + conventional](../15_isic2019_real_plus_gan_conventional_local.ipynb). They have no pilot-training stage.

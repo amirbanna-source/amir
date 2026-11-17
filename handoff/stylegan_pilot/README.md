@@ -1,3 +1,5 @@
+> **Superseded 17 November 2026.** This is the historical pilot handoff. Use the [full GAN workflows](../../workflows/full_gan/START_HERE.md) for the current no-pilot route.
+
 # Sandra's fixed StyleGAN2-ADA pilot
 
 Use the complete **StyleGAN2ADA_Pilot_Ready.zip** handoff shared separately with Sandra. **Do not upload the training images or the complete handoff ZIP to GitHub.** This GitHub directory is a readable code mirror; it omits the training images and bundled NVIDIA source. Copying this directory alone is not the complete runnable package.
@@ -10,7 +12,7 @@ Use the complete **StyleGAN2ADA_Pilot_Ready.zip** handoff shared separately with
 
 No training settings need editing. The launcher uses the supplied pinned official PyTorch/CUDA Docker definition when Docker is installed. GPU-enabled Docker and a compatible NVIDIA driver must already be available. Otherwise it uses the documented host environment: Python, PyTorch 2.11.0/CUDA 13, nvcc and a compatible C++ compiler. On a managed campus cluster, run inside its allocated GPU session.
 
-On an already configured host environment, open `Run_Pilot.ipynb` from the extracted bundle and select **Run All**. [Notebook 13](../../notebooks/13_isic2019_stylegan2ada_pilot.ipynb) mirrors that notebook; it must be run from the complete bundle, not from this repository's notebooks directory.
+On an already configured host environment, open `Run_Pilot.ipynb` from the extracted bundle and select **Run All**. [Notebook 13](../../notebooks/archive/13_isic2019_stylegan2ada_pilot.ipynb) mirrors that notebook; it must be run from the complete bundle, not from this repository's notebooks directory.
 
 ## Included in the handoff
 

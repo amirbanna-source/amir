@@ -2,6 +2,10 @@
 
 Working thesis Results chapter, prepared 13 November 2026. This chapter consolidates completed experiment records; it reports no new training or test evaluation. Procedures are described in the [Methods chapter](methodology.md). Pending experiments are marked explicitly.
 
+## Pending-work update — 17 November 2026
+
+The previously described 20-kimg campus pilot is no longer the active plan. It is replaced by a full 2,000-kimg StyleGAN2-ADA run and separate real + GAN / real + GAN + conventional CNN workflows using the original frozen cohort. They are prepared but have not produced results in this record. All completed numerical tables below remain unchanged. Pilot-specific prospective entries in section 9 are historical and superseded by the [current full workflow](../workflows/full_gan/START_HERE.md).
+
 ## 1. Evaluated cohort and reporting scope
 
 The audited source cohort contained 1,761 unique images with verified ISIC 2019 diagnoses. Excluding 129 AK images produced the binary cohort of 1,632 images. The inherited split contained 972 training images, 329 validation images and 331 reserved test images. The validation set comprised 179 benign and 150 malignant images.

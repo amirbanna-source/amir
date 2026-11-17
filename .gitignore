@@ -24,3 +24,11 @@ docs/.Rhistory
 
 # Private frozen metadata input for the local comparison notebooks
 /artifacts/isic2019_frozen_binary_split_1632.csv
+
+# Private full-workflow inputs, caches and results
+/workflows/full_gan/data/
+/workflows/full_gan/results/
+/workflows/full_gan/.deps/
+/workflows/full_gan/.containers/
+/workflows/full_gan/vendor/
+ISIC_Full_GAN_Workflows.zip

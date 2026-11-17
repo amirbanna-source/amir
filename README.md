@@ -1,5 +1,12 @@
 # Skin lesion classification: benign versus malignant augmentation study
 
+## Current execution route — 17 November 2026
+
+Use [14 — full GAN](notebooks/14_isic2019_real_plus_gan_local.ipynb) and [15 — full GAN + conventional](notebooks/15_isic2019_real_plus_gan_conventional_local.ipynb), inside the complete private workflow package. There is **no pilot-training stage**. The shared full GAN is trained once for 2,000 kimg and its generated pool reused across both classifier conditions.
+
+The original frozen 1,632-image cohort is selected; the private package includes its metadata and the archived CNN starting weights. Original 972 training +329 validation image files are still required. These workflows are prepared, not executed or validated on the campus cluster. [Setup and full recipe](workflows/full_gan/START_HERE.md). Historical pilot material below is superseded.
+
+
 Master's thesis work by **Amir Albana**. The current task is **binary classification**: benign (NV/BKL/DF/VASC) versus malignant (MEL/BCC/SCC), excluding AK. The study compares no augmentation, conventional augmentation, GAN augmentation and their combination.
 
 ## Campus pilot handoff (11 November 2026)
