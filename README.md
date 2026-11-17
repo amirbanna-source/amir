@@ -1,13 +1,12 @@
 # Skin lesion classification: benign versus malignant augmentation study
 
-## Current execution route — 17 November 2026
+## Current execution route — source only
 
-Use [14 — full GAN](notebooks/14_isic2019_real_plus_gan_local.ipynb) and [15 — full GAN + conventional](notebooks/15_isic2019_real_plus_gan_conventional_local.ipynb), inside the complete private workflow package. There is **no pilot-training stage**. The shared full GAN is trained once for 2,000 kimg and its generated pool reused across both classifier conditions.
+The complete [image-free workflow code](workflows/full_gan/START_HERE.md) is on GitHub. [Download the code-only ZIP](workflows/ISIC_Full_GAN_Workflows_Code_Only.zip).
 
-The original frozen 1,632-image cohort is selected; the private package includes its metadata and the archived CNN starting weights. All original 972 training +329 validation images are now included privately in the updated package; frozen membership, all training source hashes and all required original decodes were verified. These workflows are prepared, not executed or validated on the campus cluster. [Setup and full recipe](workflows/full_gan/START_HERE.md). Historical pilot material below is superseded.
+Use [14 — GAN](notebooks/14_isic2019_real_plus_gan_local.ipynb) and [15 — GAN + conventional](notebooks/15_isic2019_real_plus_gan_conventional_local.ipynb), or the corresponding shell launchers. Sandra sets the path to the original image folder she already has; no images are uploaded here. The fixed split/initialization assets are restored automatically from the existing image-free reference archive, and GAN inputs are built locally.
 
-
-Master's thesis work by **Amir Albana**. The current task is **binary classification**: benign (NV/BKL/DF/VASC) versus malignant (MEL/BCC/SCC), excluding AK. The study compares no augmentation, conventional augmentation, GAN augmentation and their combination.
+There is no pilot-training stage. The shared full GAN runs for 2,000 kimg and its pool is reused across classifier conditions. Source-only export checks passed against the verified originals. Full GPU training and the campus container setup remain untested.
 
 ## Campus pilot handoff (11 November 2026)
 

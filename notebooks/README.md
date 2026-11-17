@@ -1,17 +1,17 @@
 # Notebooks
 
-## Current workflows: no pilot stage
+## Current workflows: source only, no pilot
 
-| Notebook | Full local/cluster workflow |
+| Notebook | Full Linux/NVIDIA workflow |
 | --- | --- |
-| [14 — GAN](14_isic2019_real_plus_gan_local.ipynb) | Train official conditional StyleGAN2-ADA for 2,000 kimg, generate a fixed pool, then train the real + GAN CNN |
-| [15 — GAN + conventional](15_isic2019_real_plus_gan_conventional_local.ipynb) | Reuse that GAN/pool and train the CNN with conventional transformations on both real and synthetic images |
+| [14 — GAN](14_isic2019_real_plus_gan_local.ipynb) | Full StyleGAN2-ADA → synthetic pool → real + GAN CNN |
+| [15 — GAN + conventional](15_isic2019_real_plus_gan_conventional_local.ipynb) | Reuse the same GAN/pool → CNN with conventional transformations |
 
-Run either notebook from the complete extracted private **ISIC_Full_GAN_Workflows** package inside an allocated Linux/NVIDIA GPU session. The equivalent shell entry points are `GAN.sh` and `GAN_PLUS_CONVENTIONAL.sh`. The second condition can create the same full GAN/pool if absent. Run sequentially.
+Download the [code-only ZIP](../workflows/ISIC_Full_GAN_Workflows_Code_Only.zip), or clone this repository and use [workflows/full_gan](../workflows/full_gan/START_HERE.md). **No images or image-containing archives are included.** Sandra supplies the existing original image folder by setting `IMAGE_DIR` in the notebook or `ISIC_IMAGE_DIR` for the shell launcher.
 
-There is no 20-kimg pilot stage and no manual approval JSON requirement. Integrity/runtime checks run automatically. The private package supplies the original fixed 1,632-image split and archived CNN starting weights; all original 972 training +329 validation images are now included under `data/real/` in the private ZIP. The data handoff is complete; all 972 training source hashes and all 1,301 original image decodes were verified. Cluster allocation/container support remain site-specific and untested here.
+Setup automatically retrieves the already published image-free classifier reference assets. The original fixed split and starting weights are restored; GAN-format resized inputs are built locally from Sandra's images. No manual frozen-file repair, 20-kimg pilot or approval JSON is required.
 
-[Full setup, inputs, recipe and limitations](../workflows/full_gan/START_HERE.md). These workflows are prepared, not executed. They do not establish image quality or clinical validity by completing. Validation stays real-only and test-image contents are never loaded.
+The full GAN budget is 2,000 kimg. Both classifier conditions reuse its pool and paired initializations. Run sequentially inside an allocated GPU session. The source-only data adapter was verified against all 1,301 originals: all 972 resized GAN images match the previous export pixel-for-pixel. Actual campus GPU/container execution remains untested.
 
 ## Supporting historical setup
 

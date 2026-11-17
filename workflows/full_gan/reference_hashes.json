@@ -1,0 +1,8 @@
+{
+  "archive_sha256": "d7f86eaf9e8ce886e681e9cd066e90921de9e6d093eb03466356c44600eaa59f",
+  "files": {
+    "initial_weights_seed42.npz": "df5d402417b7268342f6a19b303e3dc0f9442484278b35a0bcb783860444b12a",
+    "initial_weights_seed43.npz": "45b1327bd0abfa2d3c12f23dc161ad0a47c1969660834def1da07fae3ef79322",
+    "initial_weights_seed44.npz": "7bc269fcad8aac128d4e1ae9d6473d2131feb51ec7d0feaaf355299471b714cf"
+  }
+}

@@ -14,6 +14,12 @@ if [[ "$BACKEND" == auto ]]; then
 fi
 case "$BACKEND" in apptainer|singularity|docker|native) ;; *) echo 'ISIC_BACKEND must be auto, apptainer, singularity, docker, or native.' >&2; exit 2;; esac
 mkdir -p "$STUDY_ROOT/.containers" "$STUDY_ROOT/.deps" "$STUDY_ROOT/results"
+mkdir -p "$STUDY_ROOT/data/real"
+SOURCE_IMAGES="${ISIC_IMAGE_DIR:-$STUDY_ROOT/data/real}"
+[[ -d "$SOURCE_IMAGES" ]] || { echo "Image directory does not exist: $SOURCE_IMAGES" >&2; exit 2; }
+SOURCE_IMAGES="$(cd -- "$SOURCE_IMAGES" && pwd)"
+[[ "$BACKEND" == native ]] && export ISIC_IMAGE_DIR="$SOURCE_IMAGES"
+
 
 ensure_image() {
     local kind="$1" image="$2"
@@ -33,8 +39,8 @@ container_command() {
     if [[ "$BACKEND" == apptainer || "$BACKEND" == singularity ]]; then
         local opts=()
         [[ "$gpu" == yes ]] && opts+=(--nv)
-        "$BACKEND" exec "${opts[@]}" --cleanenv --bind "$STUDY_ROOT:/study" --pwd /study \
-            --env "PYTHONPATH=/study/.deps/$kind" \
+        "$BACKEND" exec "${opts[@]}" --cleanenv --bind "$STUDY_ROOT:/study" --bind "$SOURCE_IMAGES:/study/data/real:ro" --pwd /study \
+            --env "PYTHONPATH=/study/.deps/$kind" --env "ISIC_IMAGE_DIR=/study/data/real" \
             --env "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0}" \
             --env "OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-4}" \
             --env "TF_NUM_INTRAOP_THREADS=${SLURM_CPUS_PER_TASK:-4}" \
@@ -47,7 +53,7 @@ container_command() {
         [[ "$gpu" == yes ]] && opts+=(--gpus "device=$allocated")
         docker run --rm "${opts[@]}" --user "$(id -u):$(id -g)" --shm-size=4g \
             --entrypoint '' -v "$STUDY_ROOT:/study" -w /study \
-            -e "PYTHONPATH=/study/.deps/$kind" -e 'CUDA_VISIBLE_DEVICES=0' \
+            -v "$SOURCE_IMAGES:/study/data/real:ro" -e "ISIC_IMAGE_DIR=/study/data/real" -e "PYTHONPATH=/study/.deps/$kind" -e 'CUDA_VISIBLE_DEVICES=0' \
             -e "OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-4}" -e TF_FORCE_GPU_ALLOW_GROWTH=true \
             -e 'PYTHONUSERBASE=/study/.cache/python' -e 'TORCH_HOME=/study/.cache/torch' \
             -e 'XDG_CACHE_HOME=/study/.cache' "$image" "$@"

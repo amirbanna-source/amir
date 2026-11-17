@@ -1,0 +1,6 @@
+{
+  "image_count": 972,
+  "split_sha256": "4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd",
+  "source_fingerprint_sha256": "a112f82529e97a8de20e04c6903fc5a1c35898f1708463a0ad37052b57e246a9",
+  "definition": "SHA256 of sorted image_id,source_sha256 lines, UTF-8, LF"
+}

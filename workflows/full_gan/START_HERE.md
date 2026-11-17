@@ -1,75 +1,57 @@
-# Public code mirror
+# Full GAN workflows — images supplied separately
 
-This directory contains code only. Use the complete private `ISIC_Full_GAN_Workflows.zip` handoff, now including all 972 original training and 329 validation images, bundled NVIDIA source, fixed split and CNN starting weights. Do not publish the ZIP or data folders.
+This GitHub folder contains the complete workflow code and NVIDIA source/license. **No images or image-containing archives are included.** Sandra uses the original dataset she already has access to.
 
-# Full GAN and GAN + conventional workflows
+## Run
 
-This replaces the earlier pilot-oriented handoff. There is no 20-kimg pilot and no manual review JSON to fill in.
-
-## Two entry points
-
-Inside a campus GPU allocation, from this extracted folder:
+Clone/download this repository, open `workflows/full_gan/`, and run inside an allocated Linux/NVIDIA GPU session:
 
 ```bash
-bash GAN.sh
+ISIC_IMAGE_DIR=/absolute/path/to/original-images bash GAN.sh
 ```
 
-This checks the original images and classifier environment, trains official conditional StyleGAN2-ADA for **2,000 kimg**, generates 972 synthetic images, and trains the real + GAN CNN across seeds 42/43/44.
-
-Then run:
+After that condition finishes:
 
 ```bash
-bash GAN_PLUS_CONVENTIONAL.sh
+ISIC_IMAGE_DIR=/absolute/path/to/original-images bash GAN_PLUS_CONVENTIONAL.sh
 ```
 
-This reuses the same completed GAN and synthetic pool and trains the CNN with conventional flips, rotations and zoom applied to both real and synthetic training images. It can also be run first: it creates the same GAN/pool if absent, then trains its own classifier condition. Run the two entry points sequentially.
+The image directory can contain subdirectories and the original source labels; images are matched by ISIC filename, not source-folder diagnosis. Only the fixed 972 training and 329 validation image contents are read. Test contents are not opened. Alternatively, place the originals in `data/real/` and omit `ISIC_IMAGE_DIR`.
 
-`GAN.ipynb` and `GAN_PLUS_CONVENTIONAL.ipynb` provide the equivalent Run All entry points from this same extracted folder. On a managed cluster, the kernel must be in the allocated GPU session; running a notebook on a login node does not allocate a GPU.
+The same-folder `GAN.ipynb` and `GAN_PLUS_CONVENTIONAL.ipynb` are Run All entry points. Set their `IMAGE_DIR` field to Sandra's existing dataset path. They call the same launchers; there is no pilot stage and no manual approval JSON.
 
-## Complete data handoff
+## Automatic setup
 
-Supplied: the frozen 1,632-image split metadata, GAN-prepared 972-image training ZIP and source audit, official pinned NVIDIA source/license, compatibility checks, archived CNN starting weights for all three seeds, the workflow code, dependency definitions, launchers and notebooks.
+1. Select Apptainer/Singularity, then Docker if available. Native framework interpreters are an administrator-configured fallback.
+2. Prepare separate PyTorch 2.11.0/CUDA 13 and TensorFlow 2.20.0 environments.
+3. Retrieve the already published, image-free reference archive from a pinned project commit and verify its SHA256. Extract only the original fixed split and three CNN initialization arrays; no source images are downloaded.
+4. Verify fixed membership, original training-source fingerprint and CNN initial weights.
+5. Build the official GAN-format RGB128 training ZIP **locally from Sandra's original images**, using the frozen training IDs only. Its actual hash and source audit are recorded; ZIP timestamps need not match the earlier prepared archive.
+6. Run full GAN training, generate the synthetic pool and train the selected classifier condition.
 
-**Included: all original 972 training and 329 validation image files used by the CNN, already placed under `data/real/`.** No separate dataset download or manual image copying is needed. `data/required_real_images.csv` lists the 1,301 included image IDs. All 972 training-file byte hashes match the saved GAN export source audit, and all required originals passed ZIP CRC and RGB decoding checks. Original CNN images are used rather than substituting the resized GAN export.
+If compute nodes have no internet, run `bash SETUP.sh` once on a permitted network-connected node before the GPU job. Cluster modules, account/partition, GPU allocation and job time limits remain site-specific. The supplied CUDA 13 image needs a compatible NVIDIA driver. The actual campus cluster and containers have not been tested here.
 
-The data dependency is now complete: the two workflows use the included originals and fixed metadata automatically. Integrity checks still stop execution if supplied files are removed or changed. Held-out test images are not included, and no test-image contents were opened during extraction. Cluster software/hardware compatibility remains to be checked on the actual campus system.
+## Two conditions and fixed recipe
 
-## Frozen means fixed membership
+| Entry point | Behavior |
+| --- | --- |
+| GAN.sh / GAN.ipynb | Full official conditional StyleGAN2-ADA, fixed synthetic pool, then real + GAN CNN |
+| GAN_PLUS_CONVENTIONAL.sh / GAN_PLUS_CONVENTIONAL.ipynb | Reuse the same completed GAN/pool; train the CNN with conventional transformations on both sources |
 
-“Frozen” means that the same images stay in training, validation and test for all experiments. It is not an error or a separate operation Sandra must perform. The chosen original cohort has 972/329/331 images and excludes AK. Its CSV is included privately and used automatically. The different 1,761-image CSV from the current repository is neither needed nor substituted.
+Either condition can create the GAN/pool if absent. Run sequentially. Full GAN: seed 142, one GPU, batch 16, conditional auto config, ADA geometry, mirror off, no pretrained weights, **2,000 kimg** (2,000,000 real-image presentations), 4-kimg ticks, snapshots every 10 ticks, automatic metrics disabled. No preliminary 20-kimg run occurs. This budget is not a guarantee of convergence or image quality.
 
-## Cluster environment
+Pool: 530 benign-requested and 442 malignant-requested images at truncation 1. CNN: archived four-convolution architecture and starting weights, seeds 42/43/44, Adam 0.0001, class weights from the real training cohort, 25 maximum epochs, patience 5, minimum real-validation BCE and threshold 0.5. Each epoch samples 486 real +486 synthetic images, with 265/221 labels from each source; 972 presentations and 31 batches. Condition two adds horizontal/vertical flips, rotation factor 0.05 and independent zoom ±0.1 with reflect fill. Matched ceilings do not imply identical realized updates under early stopping; counts are saved.
 
-The default backend is Apptainer, then Singularity, then Docker if available. An allocated compatible NVIDIA GPU, a driver supporting the supplied CUDA 13 environment, compiler support through the devel image, and enough disk space for images/checkpoints are required. Only one GPU is used; multiple allocated GPUs do not automatically accelerate this recipe.
+## Data and results
 
-The wrappers keep PyTorch and TensorFlow in separate container environments. The GAN uses the previously pinned PyTorch 2.11.0/CUDA 13 devel image. The classifier uses the official TensorFlow 2.20.0 GPU image. Small additional dependencies are installed into private folders, without changing cluster system packages. Initial setup needs network access and writes sizable container/dependency caches.
+The fixed cohort has **1,632 images with AK excluded**, matching the completed comparisons. The different later 1,761-image repository CSV is not used. There is no need to repair or recreate a split manually.
 
-If compute nodes are offline, run `bash SETUP.sh` once on a permitted network-connected node before submitting the GPU job. This prepares software only and starts no training. Some sites require `module load apptainer` first. The cluster's account, partition, GPU request and wall-time directives must come from its actual documentation or Sandra's existing working GPU submission. These details are unknown here and are not guessed by this package.
+Inputs are mounted read-only in the container backends. Generated datasets, caches, models, synthetic images and results are created locally and ignored by Git. No classifier test evaluation runs. Exact duplicated synthetic outputs block classifier fitting, but automatic completion does not establish image quality, clinical label correctness or absence of near-copying. Review those limitations before interpreting results.
 
-If containers are unavailable, `ISIC_BACKEND=native` uses existing interpreters selected by `GAN_PYTHON` and `CNN_PYTHON`. They must already provide the documented framework versions. This is a fallback for an administrator-configured environment, not a promise that any system Python will work.
+Completed outputs are reused only when provenance agrees. Failed/incomplete training is preserved and refused rather than silently resumed. Exact optimizer/RNG resume is not implemented. Allocate sufficient wall time.
 
-The official installation references are https://apptainer.org/docs/user/main/gpu.html and https://www.tensorflow.org/install/docker . Container availability and the campus machine have not been tested here.
+## Validation
 
-## Recorded experiment recipe
+The original-data package previously verified all 972 training source hashes and all 1,301 required image decodes. The source-only exporter was checked against those same originals and the earlier training export. Shell/Python/notebook syntax, restored weights, source-file hashes, source/class sampling and orchestration guards were checked. Full GPU training, container setup and campus execution remain untested.
 
-- Full GAN: official source pin `d72cc7d041b42ec8e806021a205ed9349f87c6a4`; seed 142; one GPU; batch 16; conditional auto configuration; ADA geometry; mirror off; no pretrained checkpoint; 2,000 kimg = 2,000,000 real-image presentations. Snapshots every 10 ticks, 4 kimg per tick. Automatic FID/KID disabled.
-- This is a fixed full-run candidate, not a claim that 2,000 kimg guarantees convergence, good images or clinical correctness. It is 100 times the earlier 20-kimg feasibility budget, and its duration on this cluster is not yet known.
-- Pool: 530 benign-requested and 442 malignant-requested RGB128 images from the final checkpoint, fixed generation seeds, truncation 1. Labels are requested conditions, not independently verified diagnoses.
-- Both classifiers: same pool and deterministic per-epoch schedule, same archived starting weights, Adam 0.0001, class weights from real training counts, batch 32, at most 25 epochs, patience 5, minimum real-validation BCE, threshold 0.5, seeds 42/43/44. Each epoch contains 486 real + 486 synthetic images (265/221 of each source), 972 presentations and 31 batches. This replaces half of real presentations to preserve the historical budget ceiling. Early stopping can produce different realized update counts, which are recorded.
-- Conventional condition: horizontal/vertical flip, rotation factor 0.05, independent zoom ±0.1, reflect fill; the same settings as the completed conventional comparison.
-
-## Integrity checks, interpretation and reruns
-
-There is no separate pilot training stage. Data/source checks and synthetic-tensor GPU compatibility checks happen automatically before fitting. The automatic configuration check performs no optimizer updates. Original-image hashes, fixed membership, archived CNN weight hashes, checkpoint identity, generated-image counts and pixel hashes are verified. Exact duplicated synthetic images block classifier fitting, but absence of exact duplicates does not establish image quality or absence of near-copying.
-
-No human-review approval file is required to run the comparison. Outputs explicitly retain that quality, diagnostic correctness and near-copy/memorization are not established by automatic execution. Interpret the resulting classifier comparisons together with those limitations and inspect the generated images before making thesis claims.
-
-Completed GAN/pool/condition outputs are reused only when recorded provenance matches. Interrupted or failed training is retained and refused on rerun rather than silently resumed. Exact optimizer/RNG resume is not implemented; allocate adequate wall time and discuss any interrupted attempt before restarting. A partial run is never labeled complete.
-
-Keep the entire `results/` directory: full GAN snapshots/logs, generated pool and provenance, each CNN's models, initial weights, epoch schedules, histories, real-validation predictions and metrics. No final test evaluation occurs. All images, split metadata, model archives and private results stay off GitHub.
-
-## Validation scope
-
-Performed here: source/notebook Python compilation, shell syntax, archived initialization-array hashes, fixed split fingerprint/counts, exact classifier architecture match, deterministic source/class sampling, generated-pool input guards, and orchestration tests with synthetic fixtures/stubbed subprocesses. Real-data verification now confirms 972 original training images and 329 original validation images, matching the frozen membership and expected class counts. All 972 training source-byte hashes match the existing audit; all selected archive entries passed CRC and RGB decoding. Twenty-one redundant source copies also agreed byte-for-byte. No test image content was read. See `data/original_image_verification.json`.
-
-Not performed here: container pulls/builds, campus scheduler allocation, GPU training, full GAN optimization, TensorFlow fitting or completed model-quality evaluation. This package cannot honestly be called campus-tested or guaranteed error-free before those checks are run on the actual cluster.
+Upstream source is unmodified except for the two recorded API compatibility patches applied at runtime. NVIDIA's documentation images are omitted; retained source hashes and license are preserved. References: https://apptainer.org/docs/user/main/gpu.html and https://www.tensorflow.org/install/docker .

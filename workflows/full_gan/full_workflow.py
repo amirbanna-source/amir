@@ -10,8 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+REAL_ROOT = Path(os.environ.get('ISIC_IMAGE_DIR', str(ROOT / 'data/real'))).expanduser().resolve()
 RESULTS = ROOT / 'results'
-DATA_SHA = '028216f4780719022b0200463c0e411a5cc18b64b4f4460e55c49a227a287f6d'
 SPLIT_SHA = '4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd'
 KIMG = 2000
 
@@ -65,7 +65,7 @@ def original_images(frame):
     from PIL import Image
     wanted = set(frame.loc[frame.split.isin(['train', 'val']), 'image_id'])
     found = {}
-    for path in sorted((ROOT / 'data/real').rglob('*')):
+    for path in sorted(REAL_ROOT.rglob('*')):
         if path.suffix.lower() in {'.png', '.jpg', '.jpeg'} and path.stem.upper() in wanted:
             found.setdefault(path.stem.upper(), []).append(path)
     missing = sorted(wanted - set(found))
@@ -73,16 +73,20 @@ def original_images(frame):
         report = RESULTS / 'missing_original_images.csv'
         report.parent.mkdir(parents=True, exist_ok=True)
         frame[frame.image_id.isin(missing)][['image_id', 'split', 'target']].to_csv(report, index=False)
-        raise RuntimeError(f'{len(missing)} original training/validation images are missing. Put the original image folder under data/real/. See results/missing_original_images.csv. Test-image contents are not needed.')
-    expected = {r['image_id']: r['source_sha256'] for r in json.loads((ROOT / 'data/isic_train128.audit.json').read_text())['training_sources']}
+        raise RuntimeError(f'{len(missing)} original training/validation images are missing. Set ISIC_IMAGE_DIR to the original image folder, or use data/real/. See results/missing_original_images.csv. Test-image contents are not needed.')
+    expected = json.loads((ROOT / 'data/training_source_fingerprint.json').read_text())
+    train_ids = set(frame.loc[frame.split == 'train', 'image_id'])
+    source_hashes = {}
     for image_id, copies in found.items():
         hashes = {sha(path) for path in copies}
         need(len(hashes) == 1, f'Conflicting source copies for {image_id}')
-        if image_id in expected:
-            need(next(iter(hashes)) == expected[image_id], f'Original training bytes differ for {image_id}; do not substitute resized GAN inputs')
+        if image_id in train_ids:
+            source_hashes[image_id] = next(iter(hashes))
         with Image.open(copies[0]) as image:
             need(image.mode == 'RGB', f'Expected original RGB image: {image_id}')
             image.load()
+    canonical = ''.join(f'{image_id},{source_hashes[image_id]}\n' for image_id in sorted(source_hashes))
+    need(len(source_hashes) == 972 and hashlib.sha256(canonical.encode()).hexdigest() == expected['source_fingerprint_sha256'], 'Original training bytes differ; do not substitute resized GAN images')
     return found
 
 
@@ -103,7 +107,30 @@ def preflight():
         status='passed', split_fingerprint=SPLIT_SHA, training_images=972,
         validation_images=329, test_image_content_read=False, initialization_hashes=hashes,
         tensorflow=tf.__version__, checked_at=datetime.now(timezone.utc).isoformat()), indent=2))
-    print('Original images, fixed split, TensorFlow and archived classifier weights verified. No model fitting in this check.')
+    from prepare_gan_input import export_dataset
+    dataset = ROOT / 'data/isic_train128.zip'
+    if not dataset.exists():
+        export_dataset(ROOT / 'data/frozen_binary_split.csv', REAL_ROOT, dataset)
+    validate_export()
+    print('Original images, fixed split, classifier weights and rebuilt GAN input verified. No model fitting in this check.')
+
+
+def validate_export():
+    import pandas as pd
+    dataset = ROOT / 'data/isic_train128.zip'
+    audit = json.loads((ROOT / 'data/isic_train128.audit.json').read_text())
+    expected = json.loads((ROOT / 'data/training_source_fingerprint.json').read_text())
+    canonical = ''.join(f"{r['image_id']},{r['source_sha256']}\n" for r in sorted(audit['training_sources'], key=lambda r: r['image_id']))
+    need(hashlib.sha256(canonical.encode()).hexdigest() == expected['source_fingerprint_sha256'], 'GAN export uses different originals')
+    digest = sha(dataset)
+    need(audit['dataset_sha256'] == digest and audit['split_sha256'] == SPLIT_SHA, 'Export hash or split differs')
+    train = read_split().query("split == 'train'")
+    with zipfile.ZipFile(dataset) as z:
+        need(z.testzip() is None and len(z.namelist()) == 973, 'Incomplete GAN input')
+        labels = json.loads(z.read('dataset.json'))['labels']
+        observed = {Path(name).stem: target for name, target in labels}
+        need(observed == dict(zip(train.image_id, train.target)) and len(labels) == 972, 'GAN input labels differ')
+    return digest
 
 
 def gan():
@@ -111,7 +138,7 @@ def gan():
     need(torch.__version__.split('+')[0] == '2.11.0', 'Use supplied PyTorch 2.11.0 environment')
     need(torch.cuda.is_available() and (torch.version.cuda or '').startswith('13.'), 'GPU-enabled CUDA 13 PyTorch runtime is required')
     dataset = ROOT / 'data/isic_train128.zip'
-    need(sha(dataset) == DATA_SHA, 'GAN training export hash differs')
+    dataset_sha = validate_export()
     with zipfile.ZipFile(dataset) as z:
         need(z.testzip() is None, 'GAN dataset ZIP is corrupt')
     read_split()
@@ -124,7 +151,7 @@ def gan():
             checkpoint = Path(state['checkpoint'])
             # The bundle may have moved between runs or container mounts.
             checkpoint = out / state['checkpoint_relative']
-            need(state.get('kimg') == KIMG and state.get('dataset_sha256') == DATA_SHA and sha(checkpoint) == state['checkpoint_sha256'], 'Completed GAN provenance/checkpoint differs')
+            need(state.get('kimg') == KIMG and state.get('dataset_sha256') == dataset_sha and sha(checkpoint) == state['checkpoint_sha256'], 'Completed GAN provenance/checkpoint differs')
             print('Reusing completed full GAN; no repeat training.')
             return
         raise RuntimeError('A full GAN attempt already started or failed. Preserve it. An interrupted run is not silently restarted or treated as complete.')
@@ -143,7 +170,7 @@ def gan():
                '--snap=10', '--metrics=none', '--seed=142', '--workers=2']
     need(not (out / 'runs').exists(), 'Training output exists; refusing overwrite')
     logged(command + ['--dry-run'], out / 'configuration_check.log', cwd=source, env=env)
-    state = dict(status='running', kimg=KIMG, dataset_sha256=DATA_SHA,
+    state = dict(status='running', kimg=KIMG, dataset_sha256=dataset_sha,
                  split_fingerprint=SPLIT_SHA, command=command, started_at=datetime.now(timezone.utc).isoformat())
     statepath.write_text(json.dumps(state, indent=2))
     try:
@@ -210,7 +237,7 @@ def cnn(conventional):
     import classifier
     folder = RESULTS / 'synthetic_pool'
     train, val, pool, provenance = classifier.prepare_inputs(ROOT / 'data/frozen_binary_split.csv',
-        ROOT / 'data/real', folder / 'pool_manifest.csv', folder / 'pool_provenance.json')
+        REAL_ROOT, folder / 'pool_manifest.csv', folder / 'pool_provenance.json')
     out = RESULTS / ('cnn_gan_conventional' if conventional else 'cnn_gan')
     if (out / 'config.json').exists():
         old = json.loads((out / 'config.json').read_text())
