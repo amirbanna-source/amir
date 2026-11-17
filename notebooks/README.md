@@ -1,12 +1,27 @@
 # Notebooks
 
-- [Original audit, split, and baseline](01_isic2019_audit_split_baseline.ipynb): preserves the original exploratory work and first training run.
-- [Baseline rerun and validation](02_isic2019_baseline_rerun_validation.ipynb): preserves the recovered split, 25-epoch rerun, saved checkpoint checks, and validation-only evaluation. Best validation loss was 1.5410 at epoch 24; validation accuracy was 0.4141 and macro F1 was 0.4063.
+## Current GAN workflow
 
-These exported Kaggle notebooks include historical failed and restart-related cells and are not yet clean end-to-end `Run All` notebooks. The bulky initial file listing and obsolete network-error traceback were removed from saved outputs; source code and meaningful results are retained. The rerun notebook header identifies the cells to use.
+**[Notebook 13: StyleGAN2-ADA pilot](13_isic2019_stylegan2ada_pilot.ipynb) is the main entry point.** Run it inside the complete extracted campus package on the documented GPU environment. The repository copy alone does not include its training images or bundled source. See the [campus run instructions](../handoff/stylegan_pilot/README.md).
 
-[Recovered artifacts](../artifacts/) include the split CSV, best CNN checkpoint, validation predictions, and confusion matrix. The 356-image test set remains unevaluated.
+| Notebook | Role | When to use |
+| --- | --- | --- |
+| [13 — StyleGAN2-ADA pilot](13_isic2019_stylegan2ada_pilot.ipynb) | Current packaged pilot | Run from the complete campus package; automatic checks precede training |
+| [11 — Official setup record](11_isic2019_official_stylegan2ada.ipynb) | Historical export, dry-run and compatibility evidence | Consult for provenance; historical cell order is not a clean launch workflow |
+| [12 — Runtime verification](12_stylegan2ada_runtime_verification.ipynb) | Standalone troubleshooting tool | Consult for separate CUDA checks; not an additional required step before notebook 13 |
 
-- [Conventional augmentation](03_isic2019_conventional_augmentation.ipynb): clean single-cell Kaggle workflow with the exact split fingerprint check, training and validation-only evaluation, including executed outputs. This can run independently with the three source datasets attached and GPU enabled.
+StyleGAN2-ADA still uses benign/malignant class conditioning. It replaces the earlier custom GAN implementation. You do not need to run all GAN notebooks in sequence.
 
-- [Paired three-seed study](04_isic2019_paired_seed_study.ipynb): clean two-cell workflow with actual executed outputs for all six runs. The embedded preview image is stored separately in artifacts/augmentation_preview.png. Requires the same three Kaggle datasets and TensorFlow GPU environment.
+## Archived custom GAN experiments
+
+[Archive index](archive/README.md): notebooks 09 and 10 preserve the completed custom conditional GAN pilot and its mode diagnostic. They are not part of the active StyleGAN2-ADA workflow. Code cells and recorded outputs have been preserved. Do not rerun them as setup for the current pilot or use the old synthetic pool for classifier augmentation.
+
+## Other notebooks
+
+- [01 — Binary split and baseline record](01_isic2019_binary_split.ipynb)
+- [02 — CNN creation and unaugmented-data workflow](02_isis2019_Cnn_creation_and_execution_on_unaugmented_dataset.ipynb)
+- [03 — Conventional augmentation experiment](03_isic2019_conventional_augmentation.ipynb)
+
+The `Random_*_test.ipynb` files are individual transformation experiments. Filenames alone do not establish that their settings match the current binary comparison; consult the [Methods](../docs/methodology.md) and [Results](../docs/results.md) for the consolidated study record.
+
+Training images and the complete image-containing campus ZIP must remain off GitHub and be shared separately.

@@ -34,7 +34,7 @@ The objectives therefore use different generator paths. This may contribute to t
 
 ## Saved evidence
 
-- [Executed notebook 10](../notebooks/10_isic2019_gan_mode_diagnostic.ipynb): source and numerical outputs; image display payloads omitted explicitly for readability.
+- [Executed notebook 10](../notebooks/archive/10_isic2019_gan_mode_diagnostic.ipynb): source and numerical outputs; image display payloads omitted explicitly for readability.
 - [Mode report JSON](../artifacts/cgan_mode_diagnostic.json) and [runtime replay JSON](../artifacts/cgan_mode_runtime_replay.json).
 - [Diagnostic script](../scripts/diagnose_cgan_modes.py).
 - [Kaggle notebook](https://www.kaggle.com/code/amirsalahk/10-isic-gan-batchnorm-diagnostic/edit), Version 1: quick save completed with output preservation selected. Six grids, JSONs and diagnostic ZIP were saved. Full executed notebook and ZIP were also downloaded; archive CRC passed.

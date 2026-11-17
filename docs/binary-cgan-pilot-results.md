@@ -44,7 +44,7 @@ The [Kaggle notebook](https://www.kaggle.com/code/amirsalahk/notebook5a45a9891c/
 
 The models ZIP SHA256 is `5c979dd3ea25673b038382bb4efaedd2df07975249c4bb740a6c6881d7219e84`. Large archives and the full generated-image pool are kept in Kaggle; repository documentation points to that saved version.
 
-See [executed notebook 09](../notebooks/09_isic2019_binary_cgan_pilot.ipynb), [training script](../scripts/binary_cgan_pilot.py), [execution verification/packaging](../scripts/verify_and_package_cgan_pilot.py), [independent archive checker](../scripts/verify_cgan_pilot.py) and [pilot protocol](gan-protocol-draft.md).
+See [executed notebook 09](../notebooks/archive/09_isic2019_binary_cgan_pilot.ipynb), [training script](../scripts/binary_cgan_pilot.py), [execution verification/packaging](../scripts/verify_and_package_cgan_pilot.py), [independent archive checker](../scripts/verify_cgan_pilot.py) and [pilot protocol](gan-protocol-draft.md).
 
 ## Next investigation
 

@@ -2,7 +2,7 @@
 
 Status: the seed-142 pilot completed 5,000 steps in Kaggle on 30 October 2026. Both models and the unfiltered 972-image pool were saved. Qualitative review found collapse and artifacts; do not use this pool for classifier training. See the [completed pilot report](binary-cgan-pilot-results.md).
 
-Use [notebook 09](../notebooks/09_isic2019_binary_cgan_pilot.ipynb) in Kaggle. It contains the complete [training script](../scripts/binary_cgan_pilot.py), setup instructions, a preflight cell and a commented explicit training launch. See the [protocol](gan-protocol-draft.md).
+Use [notebook 09](../notebooks/archive/09_isic2019_binary_cgan_pilot.ipynb) in Kaggle. It contains the complete [training script](../scripts/binary_cgan_pilot.py), setup instructions, a preflight cell and a commented explicit training launch. See the [protocol](gan-protocol-draft.md).
 
 The first pilot fixes seed 142 and 5,000 adversarial steps on the 972 frozen training images. It saves scalar logs each step, both-class fixed grids and full TensorFlow checkpoint states every 500 steps. Model, data-order, latent, grid and audit streams are recorded separately. The final unfiltered pool has 530 requested benign and 442 requested malignant images. An exact decoded/resized-pixel copy audit is included. Feature-based near-copy analysis, diversity review and label plausibility review remain work to complete before any downstream classifier experiment.
 
