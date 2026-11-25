@@ -2,7 +2,7 @@
 # Shared Linux container support. Source this file from the launchers.
 set -euo pipefail
 STUDY_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-GAN_IMAGE='pytorch/pytorch:2.11.0-cuda13.0-cudnn9-devel@sha256:6e8a7a6dedf900096f90190f66f988e7e658cda4f1e6cbc7c17e3a38980a4f89'
+GAN_IMAGE='pytorch/pytorch@sha256:6e8a7a6dedf900096f90190f66f988e7e658cda4f1e6cbc7c17e3a38980a4f89'
 CNN_IMAGE='tensorflow/tensorflow:2.20.0-gpu'
 BACKEND="${ISIC_BACKEND:-auto}"
 if [[ "$BACKEND" == auto ]]; then
