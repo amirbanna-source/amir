@@ -1,12 +1,9 @@
-# Full GAN and GAN + conventional: image-free GitHub handoff
+# Full GAN classifier comparisons
 
-The complete [source-only workflow](../workflows/full_gan/START_HERE.md) and [code-only ZIP](../workflows/ISIC_Full_GAN_Workflows_Code_Only.zip) are now available on GitHub. No images, resized-image archives or generated outputs are included.
+[Workflow 14](../notebooks/14_isic2019_real_plus_gan_local.ipynb) trains the full conditional StyleGAN2-ADA model and a real + GAN classifier. [Workflow 15](../notebooks/15_isic2019_real_plus_gan_conventional_local.ipynb) uses the same generator, synthetic pool and real/synthetic schedules with conventional image transformations.
 
-- [14 — GAN](../notebooks/14_isic2019_real_plus_gan_local.ipynb): train the full conditional StyleGAN2-ADA run, generate a fixed pool and train the real + GAN CNN.
-- [15 — GAN + conventional](../notebooks/15_isic2019_real_plus_gan_conventional_local.ipynb): reuse the same GAN/pool and train the CNN with conventional transformations on both sources.
+Both workflows use the [AK-inclusive GitHub manifest](../artifacts/isic2019_binary_split.csv). It contains 1,056 training, 353 validation and 352 test images, with AK assigned to the study's malignant group. Setup builds the GAN input from the locally supplied training originals. Preflight checks train and validation images, and test contents remain unopened.
 
-Sandra points the notebook's `IMAGE_DIR` or shell `ISIC_IMAGE_DIR` to her existing original image folder. Setup restores the original fixed 1,632-image split and archived CNN starting weights from the existing pinned image-free reference archive, then builds the GAN training ZIP locally from the 972 original training images. The frozen split does not need manual repair. Only training/validation image contents are read.
+The no-augmentation predictions for seeds 42, 43 and 44 match the 353 validation IDs, original diagnoses, binary labels and groups. The archived baseline configuration records Adam 0.001, TensorFlow 2.19.0 and 31 batches per epoch. The current baseline notebook source has a separate Adam 0.0001 setting. Use the matched real-only classifier at Adam 0.0001, TensorFlow 2.20.0 and 33 batches per epoch to estimate the augmentation effect under the current recipe.
 
-There is no pilot stage or human-approval JSON requirement. Automatic integrity/runtime checks remain. The two conditions share a 2,000-kimg GAN and fixed 530/442 synthetic pool, with classifier seeds 42/43/44 and matching initial weights and source schedules. Full details are in the setup guide.
-
-Verified: all required original inputs, training-source fingerprint, restored reference assets, source hashes, notebook/shell syntax and rebuilt GAN pixels identical to the previous export. Full GPU training, container pulls and actual campus execution are untested. Automated completion does not establish image quality or clinical validity.
+See the [setup and execution instructions](../workflows/full_gan/START_HERE.md) or download the [code-only ZIP](../workflows/ISIC_Full_GAN_Workflows_Code_Only.zip). Training images, checkpoints and generated pools stay local.

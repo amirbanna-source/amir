@@ -2,11 +2,11 @@
 
 Working thesis Methods draft, updated 13 November 2026. This version describes completed procedures in the past tense and identifies unexecuted components explicitly. The original multiclass work is preliminary; the current task is binary classification.
 
-## Execution revision — 17 November 2026
+## Execution revision for workflows 14 and 15 (25 November 2026)
 
-The previously proposed 20-kimg StyleGAN2-ADA pilot is superseded. The selected next candidate is a **full 2,000-kimg run** on the original 972-image training cohort, followed by automatic generation of a fixed 530/442 synthetic pool and two separate CNN workflows: real + GAN and real + GAN with conventional transformations. The shared GAN/pool and archived seed-specific CNN starting weights are reused. No manual approval JSON is required for execution; image-quality and near-copying limitations must still be assessed when interpreting results.
+The current full GAN workflows use the [verified AK-inclusive binary manifest](../artifacts/isic2019_binary_split.csv) with 1,056 train, 353 validation and 352 test images. The study maps AK to malignant. A shared 2,000-kimg conditional StyleGAN2-ADA run trains on the 1,056 training images and supplies one pool of 538 benign-requested and 518 malignant-requested images. Both synthetic classifier conditions use the same pool and seed-specific schedules.
 
-This revision uses the original frozen 1,632-image cohort, excluding AK. It is supplied privately in the new package and differs from the later 1,761-image CSV currently in the repository. The private package now contains all 972 original training and 329 validation images. Every training source-byte hash matches the existing audit; all selected original images passed ZIP CRC and RGB decoding checks, with no test-image content read. The full workflows are prepared, not executed or campus-tested. See the [current execution recipe](../workflows/full_gan/START_HERE.md). This revision supersedes the earlier pilot-specific launch settings below; completed experiment methods are unchanged.
+Sandra's three validation prediction files match the new validation assignment. Her archived configuration records Adam 0.001 and TensorFlow 2.19.0. The matched real-only condition uses Adam 0.0001, TensorFlow 2.20.0 and 33 batches per epoch, matching the current GAN classifiers. All three new conditions use the CNN architecture and seed-specific initialization arrays from the AK-inclusive baseline. See the [current execution recipe](../workflows/full_gan/START_HERE.md). The sections below document the earlier AK-excluded experiments and plans.
 
 ## 1. Study design and experimental status
 
@@ -160,7 +160,7 @@ The principal limitations are the small selected cohort, heterogeneous binary gr
 
 - [Dataset audit](data-audit.md)
 - [Binary mapping, counts and fingerprints](../artifacts/binary_config.json)
-- [Frozen binary split](../artifacts/isic2019_binary_split.csv) and [AK exclusions](../artifacts/isic2019_binary_excluded_ak.csv)
+- [Current verified AK-inclusive binary split](../artifacts/isic2019_binary_split.csv)
 - [Original baseline](binary-baseline.md), [revised baseline](binary-lower-lr-results.md), [conventional augmentation](binary-conventional-augmentation.md)
 - [Custom GAN pilot](binary-cgan-pilot-results.md) and [mode diagnostic](gan-mode-diagnostic.md)
 - [Official GAN transition](stylegan2ada-transition.md), [campus launcher](../handoff/stylegan_pilot/README.md), [evaluation plan](stylegan2ada-pilot-evaluation.md)

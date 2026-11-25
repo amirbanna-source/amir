@@ -9,31 +9,13 @@ import json
 import zipfile
 from pathlib import Path
 
-import pandas as pd
 from PIL import Image
 
-FINGERPRINT = '4f3037e5dc1726e5a534e3a6f155df3e0e0be52229b057659e097483fd0800cd'
-MAPPING = {'NV': 0, 'BKL': 0, 'DF': 0, 'VASC': 0, 'MEL': 1, 'BCC': 1, 'SCC': 1}
-
-
-def verified_train(frame):
-    required = {'image_id', 'label', 'group', 'split', 'original_label', 'target'}
-    assert required <= set(frame.columns), 'Manifest columns missing'
-    digest = hashlib.sha256(frame[['image_id', 'label', 'group', 'split']]
-                           .sort_values('image_id').to_csv(index=False).encode()).hexdigest()
-    assert digest == FINGERPRINT, 'Frozen split differs'
-    assert len(frame) == 1632 and frame.image_id.is_unique
-    assert frame.group.notna().all() and frame.groupby('group').split.nunique().max() == 1
-    assert frame.original_label.map(MAPPING).equals(frame.target), 'Target mapping differs'
-    assert frame.target.map({0: 'benign', 1: 'malignant'}).equals(frame.label)
-    assert frame.split.value_counts().to_dict() == {'train': 972, 'test': 331, 'val': 329}
-    train = frame[frame.split == 'train'].sort_values('image_id').reset_index(drop=True)
-    assert train.target.value_counts().to_dict() == {0: 530, 1: 442}
-    return train
+from study_split import SPLIT_SHA, TRAIN_COUNTS, TRAIN_SIZE, read_split
 
 
 def export_dataset(manifest, input_root, output):
-    train = verified_train(pd.read_csv(manifest))
+    train = read_split(manifest).query("split == 'train'").sort_values('image_id')
     assert not output.exists(), 'Refusing to overwrite existing dataset'
     wanted = set(train.image_id)
     copies = {}
@@ -67,17 +49,17 @@ def export_dataset(manifest, input_root, output):
         archive.writestr('dataset.json', json.dumps({'labels': labels}))
     with zipfile.ZipFile(partial) as archive:
         assert archive.testzip() is None
-        assert len(archive.namelist()) == 973
+        assert len(archive.namelist()) == TRAIN_SIZE + 1
         assert json.loads(archive.read('dataset.json'))['labels'] == labels
     partial.rename(output)
-    report = {'dataset': str(output), 'image_count': 972, 'class_counts': {'0': 530, '1': 442},
-              'split_sha256': FINGERPRINT,
+    report = {'dataset': str(output), 'image_count': TRAIN_SIZE, 'class_counts': TRAIN_COUNTS,
+              'split_sha256': SPLIT_SHA,
               'dataset_sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
               'preprocessing': 'Pillow RGB; whole-image bilinear resize to 128x128; uint8 PNG',
               'note': 'Official GAN loader performs its own numeric scaling; CNN preprocessing unchanged',
               'validation_test_image_content_read': False, 'training_sources': evidence}
     output.with_suffix('.audit.json').write_text(json.dumps(report, indent=2))
-    print(f'Exported {len(labels)} training images (530 benign / 442 malignant): {output}')
+    print(f'Exported {len(labels)} training images ({TRAIN_COUNTS[0]} benign / {TRAIN_COUNTS[1]} malignant): {output}')
     return report
 
 

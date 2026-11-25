@@ -18,7 +18,13 @@ mkdir -p "$STUDY_ROOT/data/real"
 SOURCE_IMAGES="${ISIC_IMAGE_DIR:-$STUDY_ROOT/data/real}"
 [[ -d "$SOURCE_IMAGES" ]] || { echo "Image directory does not exist: $SOURCE_IMAGES" >&2; exit 2; }
 SOURCE_IMAGES="$(cd -- "$SOURCE_IMAGES" && pwd)"
-[[ "$BACKEND" == native ]] && export ISIC_IMAGE_DIR="$SOURCE_IMAGES"
+REFERENCE_DIR="$(cd -- "$STUDY_ROOT/../.." && pwd)/artifacts"
+if [[ ! -f "$REFERENCE_DIR/isic2019_binary_split.csv" ]]; then
+    REFERENCE_DIR="$STUDY_ROOT/.cache/reference"
+fi
+if [[ "$BACKEND" == native ]]; then
+    export ISIC_IMAGE_DIR="$SOURCE_IMAGES" ISIC_REFERENCE_DIR="$REFERENCE_DIR"
+fi
 
 
 ensure_image() {
@@ -39,8 +45,8 @@ container_command() {
     if [[ "$BACKEND" == apptainer || "$BACKEND" == singularity ]]; then
         local opts=()
         [[ "$gpu" == yes ]] && opts+=(--nv)
-        "$BACKEND" exec "${opts[@]}" --cleanenv --bind "$STUDY_ROOT:/study" --bind "$SOURCE_IMAGES:/study/data/real:ro" --pwd /study \
-            --env "PYTHONPATH=/study/.deps/$kind" --env "ISIC_IMAGE_DIR=/study/data/real" \
+        "$BACKEND" exec "${opts[@]}" --cleanenv --bind "$STUDY_ROOT:/study" --bind "$SOURCE_IMAGES:/study/data/real:ro" --bind "$REFERENCE_DIR:/reference:ro" --pwd /study \
+            --env "PYTHONPATH=/study/.deps/$kind" --env "ISIC_IMAGE_DIR=/study/data/real" --env "ISIC_REFERENCE_DIR=/reference" \
             --env "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0}" \
             --env "OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-4}" \
             --env "TF_NUM_INTRAOP_THREADS=${SLURM_CPUS_PER_TASK:-4}" \
@@ -53,7 +59,7 @@ container_command() {
         [[ "$gpu" == yes ]] && opts+=(--gpus "device=$allocated")
         docker run --rm "${opts[@]}" --user "$(id -u):$(id -g)" --shm-size=4g \
             --entrypoint '' -v "$STUDY_ROOT:/study" -w /study \
-            -v "$SOURCE_IMAGES:/study/data/real:ro" -e "ISIC_IMAGE_DIR=/study/data/real" -e "PYTHONPATH=/study/.deps/$kind" -e 'CUDA_VISIBLE_DEVICES=0' \
+            -v "$SOURCE_IMAGES:/study/data/real:ro" -e "ISIC_IMAGE_DIR=/study/data/real" -v "$REFERENCE_DIR:/reference:ro" -e "ISIC_REFERENCE_DIR=/reference" -e "PYTHONPATH=/study/.deps/$kind" -e 'CUDA_VISIBLE_DEVICES=0' \
             -e "OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-4}" -e TF_FORCE_GPU_ALLOW_GROWTH=true \
             -e 'PYTHONUSERBASE=/study/.cache/python' -e 'TORCH_HOME=/study/.cache/torch' \
             -e 'XDG_CACHE_HOME=/study/.cache' "$image" "$@"
@@ -86,8 +92,8 @@ setup_one() {
 }
 
 run_stage() {
-    local kind="$1" stage="$2"
+    local kind="$1" stage="$2" gpu="${3:-yes}"
     local script=/study/full_workflow.py
     [[ "$BACKEND" == native ]] && script="$STUDY_ROOT/full_workflow.py"
-    container_command "$kind" yes python -u "$script" "$stage"
+    container_command "$kind" "$gpu" python -u "$script" "$stage"
 }

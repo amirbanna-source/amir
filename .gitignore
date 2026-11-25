@@ -35,3 +35,5 @@ ISIC_Full_GAN_Workflows.zip
 # Publish only the inspected source-only ZIP; caches and generated inputs stay local
 !/workflows/ISIC_Full_GAN_Workflows_Code_Only.zip
 /workflows/full_gan/.cache/
+/workflows/full_gan/.setup.lock
+/workflows/full_gan/.workflow.lock
